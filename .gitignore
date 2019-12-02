@@ -61,3 +61,9 @@ dis/
 retinotopic_mapping.egg-info/
 *.egg
 
+
+*.bak
+
+*.pkl
+
+retinotopic_mapping/other_test/io_test/output.png

@@ -35,5 +35,5 @@ class TestDisplayLogAnalysis(unittest.TestCase):
 
         lsn_dict = pd_onsets_com['006_LocallySparseNoiseRetinotopicMapping']
         # print('\n'.join(lsn_dict.keys()))
-        for probe_n, probe_onset in lsn_dict.items():
+        for probe_n, probe_onset in list(lsn_dict.items()):
             assert (len(probe_onset['global_pd_onset_ind']) == repeat * iteration)

@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import matplotlib.colors as col
 import scipy.ndimage as ni
-import ImageAnalysis as ia
+from tools import ImageAnalysis as ia
 
 try:
     import skimage.external.tifffile as tf
@@ -17,7 +17,7 @@ except ImportError:
     import tifffile as tf
 
 try: import cv2
-except ImportError as e: print e
+except ImportError as e: print(e)
 
 
 def get_rgb(colorStr):
@@ -31,11 +31,11 @@ def get_color_str(R, G, B):
     """
     get hex color string from R,G,B value (integer with uint8 format)
     """
-    if not (isinstance(R, (int, long)) and isinstance(G, (int, long)) and isinstance(G, (int, long))):
-        raise TypeError, 'Input R, G and B should be integer!'
+    if not (isinstance(R, int) and isinstance(G, int) and isinstance(G, int)):
+        raise TypeError('Input R, G and B should be integer!')
 
     if not ((0 <= R <= 255) and (0 <= G <= 255) and (
-            0 <= B <= 255)): raise ValueError, 'Input R, G and B should between 0 and 255!'
+            0 <= B <= 255)): raise ValueError('Input R, G and B should between 0 and 255!')
     return '#' + ''.join(map(chr, (R, G, B))).encode('hex')
 
 
@@ -53,19 +53,19 @@ def binary_2_rgba(img, foregroundColor='#ff0000', backgroundColor='#000000', for
     if img.dtype == np.bool:
         pass
     elif issubclass(img.dtype.type, np.integer):
-        if np.amin(img) < 0 or np.amax(img) > 1: raise ValueError, 'Values of input image should be either 0 or 1.'
+        if np.amin(img) < 0 or np.amax(img) > 1: raise ValueError('Values of input image should be either 0 or 1.')
     else:
-        raise TypeError, 'Data type of input image should be either np.bool or integer.'
+        raise TypeError('Data type of input image should be either np.bool or integer.')
 
     if type(foregroundAlpha) is int:
-        if foregroundAlpha < 0 or foregroundAlpha > 255: raise ValueError, 'Value of foreGroundAlpha should be between 0 and 255.'
+        if foregroundAlpha < 0 or foregroundAlpha > 255: raise ValueError('Value of foreGroundAlpha should be between 0 and 255.')
     else:
-        raise TypeError, 'Data type of foreGroundAlpha should be integer.'
+        raise TypeError('Data type of foreGroundAlpha should be integer.')
 
     if type(backgroundAlpha) is int:
-        if backgroundAlpha < 0 or backgroundAlpha > 255: raise ValueError, 'Value of backGroundAlpha should be between 0 and 255.'
+        if backgroundAlpha < 0 or backgroundAlpha > 255: raise ValueError('Value of backGroundAlpha should be between 0 and 255.')
     else:
-        raise TypeError, 'Data type of backGroundAlpha should be integer.'
+        raise TypeError('Data type of backGroundAlpha should be integer.')
 
     fR, fG, fB = get_rgb(foregroundColor)
     bR, bG, bB = get_rgb(backgroundColor)
@@ -204,7 +204,7 @@ def show_movie(path,  # tif file path or numpy arrary of the movie
         elif mode == 'dFoverF':
             mov = dFoverFMov
         else:
-            raise LookupError, 'The "mode" should be "raw", "dF" or "dFoverF"!'
+            raise LookupError('The "mode" should be "raw", "dF" or "dFoverF"!')
 
     if isinstance(path, str):
         tf.imshow(mov,
@@ -249,10 +249,10 @@ def alpha_blending(image, alphaData, vmin, vmax, cmap='Paired', sectionNum=10, b
     """
 
     if image.shape != alphaData.shape:
-        raise LookupError, '"image" and "alphaData" should have same shape!!'
+        raise LookupError('"image" and "alphaData" should have same shape!!')
 
     if np.amin(alphaData) < 0:
-        raise ValueError, 'All the elements in alphaData should be bigger than zero.'
+        raise ValueError('All the elements in alphaData should be bigger than zero.')
 
     # normalize image
     image[image > vmax] = vmax
@@ -388,9 +388,9 @@ def grid_axis(rowNum, columnNum, totalPlotNum, **kwarg):
 
 def tile_axis(f, rowNum, columnNum, topDownMargin=0.05, leftRightMargin=0.05, rowSpacing=0.05, columnSpacing=0.05):
     if 2 * topDownMargin + (
-        (rowNum - 1) * rowSpacing) >= 1: raise ValueError, 'Top down margin or row spacing are too big!'
+        (rowNum - 1) * rowSpacing) >= 1: raise ValueError('Top down margin or row spacing are too big!')
     if 2 * leftRightMargin + (
-        (columnNum - 1) * columnSpacing) >= 1: raise ValueError, 'Left right margin or column spacing are too big!'
+        (columnNum - 1) * columnSpacing) >= 1: raise ValueError('Left right margin or column spacing are too big!')
 
     height = (1 - (2 * topDownMargin) - (rowNum - 1) * rowSpacing) / rowNum
     width = (1 - (2 * leftRightMargin) - (columnNum - 1) * columnSpacing) / columnNum
@@ -484,4 +484,4 @@ def value_2_rgb(value, cmap):
 
 if __name__ == '__main__':
     plt.ioff()
-    print 'for debug'
+    print('for debug')

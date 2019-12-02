@@ -236,7 +236,7 @@ sn = stim.SparseNoise(mon,ind,iteration=2,probe_frame_num=%r)
     return avg_time
 
 if __name__ == '__main__':
-    print '\n===== Running Tests ====='
+    print('\n===== Running Tests =====')
     unittest.main(verbosity=2)
     
     # To test display by index routines for DriftingGratingCircle
@@ -249,14 +249,14 @@ if __name__ == '__main__':
     time_non_index_SN = time_SparseNoise_non_index(probe_frame_num=20)
     speedup_SN = time_non_index_SN / time_by_index_SN
     
-    print '\n===== Timing Analysis for Index Routine ====='
-    print 'DriftingGrating by index routine  : %r seconds' % round(time_by_index_DG,2)
-    print 'DriftingGrating non index routine : %r seconds' % round(time_non_index_DG,2)
-    print 'Amount of speedup : %r x' % round(speedup_DG,2)
+    print('\n===== Timing Analysis for Index Routine =====')
+    print('DriftingGrating by index routine  : %r seconds' % round(time_by_index_DG,2))
+    print('DriftingGrating non index routine : %r seconds' % round(time_non_index_DG,2))
+    print('Amount of speedup : %r x' % round(speedup_DG,2))
     
-    print 'SparseNoise by index routine : %r seconds' % round(time_by_index_SN,2)
-    print 'SparseNoise non index routine : %r seconds' %round(time_non_index_SN,2)
-    print 'Amount of speedup : %r x' % round(speedup_SN,2)
+    print('SparseNoise by index routine : %r seconds' % round(time_by_index_SN,2))
+    print('SparseNoise non index routine : %r seconds' %round(time_non_index_SN,2))
+    print('Amount of speedup : %r x' % round(speedup_SN,2))
     
     
 

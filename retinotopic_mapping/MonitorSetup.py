@@ -74,7 +74,7 @@ class Monitor(object):
                  gamma=None,
                  gamma_grid=None,
                  luminance=None,
-                 downsample_rate=10,
+                 downsample_rate=8,
                  refresh_rate=60.):
         """
         Initialize monitor object.
@@ -110,7 +110,7 @@ class Monitor(object):
         self.gamma = gamma
         self.gamma_grid = gamma_grid
         self.luminance = luminance
-        self.refresh_rate = 60
+        self.refresh_rate = refresh_rate
 
         # distance form projection point of the eye to bottom of the monitor
         self.C2B_cm = self.mon_height_cm - self.C2T_cm
@@ -118,11 +118,11 @@ class Monitor(object):
         self.C2P_cm = self.mon_width_cm - self.C2A_cm
 
         resolution = [0, 0]
-        resolution[0] = self.resolution[0] / downsample_rate
-        resolution[1] = self.resolution[1] / downsample_rate
+        resolution[0] = self.resolution[0] // downsample_rate
+        resolution[1] = self.resolution[1] // downsample_rate
 
-        map_coord_x, map_coord_y = np.meshgrid(range(resolution[1]),
-                                               range(resolution[0]))
+        map_coord_x, map_coord_y = np.meshgrid(list(range(resolution[1])),
+                                               list(range(resolution[0])))
 
         if self.visual_field == "left":
             map_x = np.linspace(self.C2A_cm, -1.0 * self.C2P_cm, resolution[1])
@@ -183,11 +183,11 @@ class Monitor(object):
         """
 
         resolution = [0, 0]
-        resolution[0] = self.resolution[0] / self.downsample_rate
-        resolution[1] = self.resolution[1] / self.downsample_rate
+        resolution[0] = int(self.resolution[0] / self.downsample_rate)
+        resolution[1] = int(self.resolution[1] / self.downsample_rate)
 
-        map_coord_x, map_coord_y = np.meshgrid(range(resolution[1]),
-                                               range(resolution[0]))
+        map_coord_x, map_coord_y = np.meshgrid(list(range(resolution[1])),
+                                               list(range(resolution[0])))
 
         new_map_x = np.zeros(resolution, dtype=np.float32)
         new_map_y = np.zeros(resolution, dtype=np.float32)
@@ -208,10 +208,10 @@ class Monitor(object):
     def plot_map(self):
 
         resolution = [0, 0]
-        resolution[0] = self.resolution[0] / self.downsample_rate
-        resolution[1] = self.resolution[1] / self.downsample_rate
+        resolution[0] = self.resolution[0] // self.downsample_rate
+        resolution[1] = self.resolution[1] // self.downsample_rate
 
-        mapcorX, mapcorY = np.meshgrid(range(resolution[1]), range(resolution[0]))
+        mapcorX, mapcorY = np.meshgrid(list(range(resolution[1])), list(range(resolution[0])))
 
         f1 = plt.figure(figsize=(12, 7))
         f1.suptitle('Remap monitor', fontsize=14, fontweight='bold')
@@ -219,8 +219,8 @@ class Monitor(object):
         OMX = plt.subplot(221)
         OMX.set_title('Linear Map X (cm)')
         currfig = plt.imshow(self.lin_coord_x)
-        levels1 = range(int(np.floor(self.lin_coord_x.min() / 10) * 10),
-                        int((np.ceil(self.lin_coord_x.max() / 10) + 1) * 10), 10)
+        levels1 = list(range(int(np.floor(self.lin_coord_x.min() / 10) * 10),
+                        int((np.ceil(self.lin_coord_x.max() / 10) + 1) * 10), 10))
         im1 = plt.contour(mapcorX, mapcorY, self.lin_coord_x, levels1, colors='k', linewidth=2)
         #        plt.clabel(im1, levels1, fontsize = 10, inline = 1, fmt='%2.1f')
         f1.colorbar(currfig, ticks=levels1)
@@ -229,8 +229,8 @@ class Monitor(object):
         OMY = plt.subplot(222)
         OMY.set_title('Linear Map Y (cm)')
         currfig = plt.imshow(self.lin_coord_y)
-        levels2 = range(int(np.floor(self.lin_coord_y.min() / 10) * 10),
-                        int((np.ceil(self.lin_coord_y.max() / 10) + 1) * 10), 10)
+        levels2 = list(range(int(np.floor(self.lin_coord_y.min() / 10) * 10),
+                        int((np.ceil(self.lin_coord_y.max() / 10) + 1) * 10), 10))
         im2 = plt.contour(mapcorX, mapcorY, self.lin_coord_y, levels2, colors='k', linewidth=2)
         #        plt.clabel(im2, levels2, fontsize = 10, inline = 1, fmt='%2.2f')
         f1.colorbar(currfig, ticks=levels2)
@@ -239,8 +239,8 @@ class Monitor(object):
         NMX = plt.subplot(223)
         NMX.set_title('Spherical Map X (deg)')
         currfig = plt.imshow(self.deg_coord_x)
-        levels3 = range(int(np.floor(self.deg_coord_x.min() / 10) * 10),
-                        int((np.ceil(self.deg_coord_x.max() / 10) + 1) * 10), 10)
+        levels3 = list(range(int(np.floor(self.deg_coord_x.min() / 10) * 10),
+                        int((np.ceil(self.deg_coord_x.max() / 10) + 1) * 10), 10))
         im3 = plt.contour(mapcorX, mapcorY, self.deg_coord_x, levels3, colors='k', linewidth=2)
         #        plt.clabel(im3, levels3, fontsize = 10, inline = 1, fmt='%2.1f')
         f1.colorbar(currfig, ticks=levels3)
@@ -249,8 +249,8 @@ class Monitor(object):
         NMY = plt.subplot(224)
         NMY.set_title('Spherical Map Y (deg)')
         currfig = plt.imshow(self.deg_coord_y)
-        levels4 = range(int(np.floor(self.deg_coord_y.min() / 10) * 10),
-                        int((np.ceil(self.deg_coord_y.max() / 10) + 1) * 10), 10)
+        levels4 = list(range(int(np.floor(self.deg_coord_y.min() / 10) * 10),
+                        int((np.ceil(self.deg_coord_y.max() / 10) + 1) * 10), 10))
         im4 = plt.contour(mapcorX, mapcorY, self.deg_coord_y, levels4, colors='k', linewidth=2)
         #        plt.clabel(im4, levels4, fontsize = 10, inline = 1, fmt='%2.1f')
         f1.colorbar(currfig, ticks=levels4)
@@ -258,7 +258,7 @@ class Monitor(object):
 
     def generate_lookup_table(self):
         """
-        generate lookup talbe between degree corrdinates and linear corrdinates
+        generate lookup table between degree coordinates and linear coordinates
         return two matrix:
         lookupI: i index in linear matrix to this pixel after warping
         lookupJ: j index in linear matrix to this pixel after warping
@@ -278,13 +278,13 @@ class Monitor(object):
         lookupI = np.zeros(degCorX.shape).astype(np.int32)
         lookupJ = np.zeros(degCorX.shape).astype(np.int32)
 
-        for j in xrange(lookupI.shape[1]):
+        for j in range(lookupI.shape[1]):
             currDegX = degCorX[0, j]
             diffDegX = degNoWarpCorX[0, :] - currDegX
             IndJ = np.argmin(np.abs(diffDegX))
             lookupJ[:, j] = IndJ
 
-            for i in xrange(lookupI.shape[0]):
+            for i in range(lookupI.shape[0]):
                 currDegY = degCorY[i, j]
                 diffDegY = degNoWarpCorY[:, IndJ] - currDegY
                 indI = np.argmin(np.abs(diffDegY))
@@ -294,7 +294,7 @@ class Monitor(object):
 
     def warp_images(self, imgs, center_coor, deg_per_pixel=0.1, is_luminance_correction=True):
         """
-        warp a image stack into visual degree coordinate system
+        warp an image stack into visual degree coordinate system
 
         parameters
         ----------
@@ -509,7 +509,7 @@ class Indicator(object):
         self.is_sync = is_sync
 
         if is_sync == False:
-            self.freq = freq  # if not synchronized with stimulation, self update frquency of the indicator
+            self.freq = freq  # if not synchronized with stimulation, self update frequency of the indicator
             self.frame_num = self.get_frames()
         else:
             self.freq = None

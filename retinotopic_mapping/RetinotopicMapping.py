@@ -57,9 +57,9 @@ def loadTrial(trialPath):
         pass
 
     try:
-        if isinstance(trialDict['finalPatches'].values()[0], dict):
+        if isinstance(list(trialDict['finalPatches'].values())[0], dict):
             trial.finalPatches = {}
-            for area, patchDict in trialDict['finalPatches'].iteritems():
+            for area, patchDict in trialDict['finalPatches'].items():
                 try:
                     trial.finalPatches.update({area: Patch(patchDict['array'], patchDict['sign'])})
                 except KeyError:
@@ -70,9 +70,9 @@ def loadTrial(trialPath):
         pass
 
     try:
-        if isinstance(trialDict['finalPatchesMarked'].values()[0], dict):
+        if isinstance(list(trialDict['finalPatchesMarked'].values())[0], dict):
             trial.finalPatchesMarked = {}
-            for area, patchDict in trialDict['finalPatchesMarked'].iteritems():
+            for area, patchDict in trialDict['finalPatchesMarked'].items():
                 try:
                     trial.finalPatchesMarked.update({area: Patch(patchDict['array'], patchDict['sign'])})
                 except KeyError:
@@ -116,7 +116,7 @@ def visualSignMap(phasemap1, phasemap2):
     """
 
     if phasemap1.shape != phasemap2.shape:
-        raise LookupError, "'phasemap1' and 'phasemap2' should have same size."
+        raise LookupError("'phasemap1' and 'phasemap2' should have same size.")
 
     gradmap1 = np.gradient(phasemap1)
     gradmap2 = np.gradient(phasemap2)
@@ -169,7 +169,7 @@ def dilationPatches(rawPatches, smallPatchThr=5, borderWidth=1):  # pixel width 
     # removing small edges
     labeledPatches, patchNum = ni.label(newPatches)
 
-    for i in xrange(1, patchNum + 1):
+    for i in range(1, patchNum + 1):
         currPatch = np.array(labeledPatches)
         currPatch[currPatch != i] = 0
         currPatch = currPatch / i
@@ -212,7 +212,7 @@ def dilationPatches2(rawPatches, dilationIter=20, borderWidth=1):  # pixel width
 
     newPatches2 = np.zeros(newPatches.shape, dtype=np.int)
 
-    for i in xrange(1, patchNum + 1):
+    for i in range(1, patchNum + 1):
         currPatch = np.zeros(labeledPatches.shape, dtype=np.int)
         currPatch[labeledPatches == i] = 1
         currPatch[labeledPatches != i] = 0
@@ -257,7 +257,7 @@ def labelPatches(patchmap, signMap):
         elif np.sum(currSignPatch[:]) < 0:
             currSign = -1
         else:
-            raise LookupError, 'This patch has no visual Sign!!'
+            raise LookupError('This patch has no visual Sign!!')
 
         patchname = 'patch' + ft.int2str(i, 2)
 
@@ -419,7 +419,7 @@ def adjacentPairs(patches, borderWidth=2):
     return all the patch pairs with same visual sign and sharing border
     """
 
-    keyList = patches.keys()
+    keyList = list(patches.keys())
     pairKeyList = []
 
     for pair in combinations(keyList, 2):
@@ -442,7 +442,7 @@ def mergePatches(array1, array2, borderWidth=2):
 
     _, patchNum = ni.measurements.label(spc)
     if patchNum > 1:
-        raise LookupError, 'this two patches are too far apart!!!'
+        raise LookupError('this two patches are too far apart!!!')
     else:
         return spc
 
@@ -489,7 +489,7 @@ def sortPatches(patchDict):
     patches = []
     newPatchDict = {}
 
-    for key, value in patchDict.iteritems():
+    for key, value in patchDict.items():
         patches.append((value, value.getArea()))
 
     patches = sorted(patches, key=lambda a: a[1], reverse=True)
@@ -512,7 +512,7 @@ def plotPatches(patches, plotaxis=None, zoom=1, alpha=0.5, markersize=5):
         plotaxis = f.add_axes([1, 1, 1, 1])
 
     imageHandle = {}
-    for key, value in patches.iteritems():
+    for key, value in patches.items():
 
         if zoom > 1:
             currPatch = Patch(ni.zoom(value.array, zoom, order=0), value.sign)
@@ -546,7 +546,7 @@ def plotPatchBorders(patches, plotaxis=None, borderWidth=2, color='#ff0000', zoo
     center = None
     area = 0
 
-    for key, value in patches.iteritems():
+    for key, value in patches.items():
 
         if zoom > 1:
             currPatch = Patch(ni.zoom(value.array, zoom, order=0), value.sign)
@@ -650,7 +650,7 @@ def plotPatchBorders2(patches, plotAxis=None, plotSize=None, borderWidth=2, zoom
     # for each patch: first item: center, second item: area, third item: patch array, forth item: sign
     forPlotting = []
 
-    for key, value in patches.iteritems():
+    for key, value in patches.items():
         currPatch = Patch(ni.zoom(value.array, zoom, order=0), value.sign)
 
         forPlotting.append([currPatch.getCenter(),
@@ -767,7 +767,7 @@ def plotPatchBorders3(patches, altPosMap, aziPosMap, plotAxis=None, plotSize=Non
         centerPatchObj = patches[centerPatchKey]
     except KeyError:
         area = []
-        for key, value in patches.iteritems():
+        for key, value in patches.items():
             area.append([key, value.getArea()])
 
         area = sorted(area, key=lambda a: a[1], reverse=True)
@@ -813,7 +813,7 @@ def plotPatchBorders3(patches, altPosMap, aziPosMap, plotAxis=None, plotSize=Non
     expandE = maxDis - center[1]
     expandW = maxDis - (width - center[1])
 
-    for key, currPatch in patches.iteritems():
+    for key, currPatch in patches.items():
 
         zoomedArray = ni.zoom(currPatch.array, zoom, order=0)
 
@@ -1142,15 +1142,15 @@ class RetinotopicMappingTrial(object):
 
         rawPatches2 = dict(rawPatches)
         # remove small patches
-        for key, value in rawPatches2.iteritems():
+        for key, value in rawPatches2.items():
             if (value.getArea() < smallPatchThr):
                 rawPatches.pop(key)
 
         # remove isolated Patches
         rawPatches2 = dict(rawPatches)
-        for key in rawPatches2.iterkeys():
+        for key in rawPatches2.keys():
             isTouching = 0
-            for key2 in rawPatches2.iterkeys():
+            for key2 in rawPatches2.keys():
                 if key != key2:
                     if rawPatches2[key].isTouching(rawPatches2[key2], borderWidth * 2):
                         isTouching = 1
@@ -1224,7 +1224,7 @@ class RetinotopicMappingTrial(object):
         eccMap[:] = np.nan
         eccMapf[:] = np.nan
 
-        for key, value in patches.iteritems():
+        for key, value in patches.items():
             patchAltC, patchAziC = value.getPixelVisualCenter(altPosMapf, aziPosMapf)
             patchEccMap = eccentricityMap(altPosMapf, aziPosMapf, patchAltC, patchAziC)
             patchEccMapf = ni.filters.uniform_filter(patchEccMap, eccMapFilterSigma)
@@ -1268,13 +1268,13 @@ class RetinotopicMappingTrial(object):
         overlapPatches = []
         newPatchesDict = {}
 
-        for key, value in patches.iteritems():
+        for key, value in patches.items():
             visualSpace, AU, _, _ = value.getVisualSpace(altPosMapf,
                                                          aziPosMapf,
                                                          pixelSize=visualSpacePixelSize,
                                                          closeIter=visualSpaceCloseIter)
             AS = value.getSigmaArea(detMap)
-            print(key + 'AU=' + str(AU) + ' AS=' + str(AS) + ' ratio=' + str(AS / AU))
+            print((key + 'AU=' + str(AU) + ' AS=' + str(AS) + ' ratio=' + str(AS / AU)))
 
             if AS / AU >= splitOverlapThr:
 
@@ -1289,7 +1289,7 @@ class RetinotopicMappingTrial(object):
                 elif NumOfMin == 0:
                     print('No local minumum was found!!!')
                 else:
-                    print(str(NumOfMin) + ' local minuma were found!!!')
+                    print((str(NumOfMin) + ' local minuma were found!!!'))
 
                     overlapPatches.append(key)
 
@@ -1308,12 +1308,12 @@ class RetinotopicMappingTrial(object):
                         f122 = f.add_subplot(122)
                         f122.set_title('visual space')
                         currPatchValue = 0
-                        for key2, value2 in newPatches.iteritems():
+                        for key2, value2 in newPatches.items():
                             currPatchValue += 1
                             currArray = np.array(value2.array, dtype=np.float32)
                             currArray[currArray == 0] = np.nan
                             currArray[currArray == 1] = currPatchValue
-                            f121.imshow(currArray, interpolation='nearest', vmin=0, vmax=len(newPatches.keys()))
+                            f121.imshow(currArray, interpolation='nearest', vmin=0, vmax=len(list(newPatches.keys())))
                             f121.set_axis_off()
                             currVisualSpace, _, _, _ = value2.getVisualSpace(altPosMapf,
                                                                              aziPosMapf,
@@ -1323,15 +1323,15 @@ class RetinotopicMappingTrial(object):
                             currVisualSpace[currVisualSpace == 0] = np.nan
                             currVisualSpace[currVisualSpace == 1] = currPatchValue
                             f122.imshow(currVisualSpace, interpolation='nearest', alpha=0.5, vmin=0,
-                                        vmax=len(newPatches.keys()))
+                                        vmax=len(list(newPatches.keys())))
 
                         xlabel = np.arange(-20, 120, visualSpacePixelSize)
                         ylabel = np.arange(60, -40, -visualSpacePixelSize)
 
                         indSpace = int(10. / visualSpacePixelSize)
 
-                        xtickInd = range(0, len(xlabel), indSpace)
-                        ytickInd = range(0, len(ylabel), indSpace)
+                        xtickInd = list(range(0, len(xlabel), indSpace))
+                        ytickInd = list(range(0, len(ylabel), indSpace))
 
                         xtickLabel = [str(int(xlabel[x])) for x in xtickInd]
                         ytickLabel = [str(int(ylabel[y])) for y in ytickInd]
@@ -1397,7 +1397,7 @@ class RetinotopicMappingTrial(object):
 
         while (mergeIter == 1) or (len(mergePairs) > 0):
 
-            print('merge iteration: ' + str(mergeIter))
+            print(('merge iteration: ' + str(mergeIter)))
 
             mergePairs = []
 
@@ -1472,7 +1472,7 @@ class RetinotopicMappingTrial(object):
                     patch2 = value[1]
 
                     # if both of these two patches are still in the 'patches' dictionary
-                    if (patch1 in patches.keys()) and (patch2 in patches.keys()):
+                    if (patch1 in list(patches.keys())) and (patch2 in list(patches.keys())):
                         # plot these patches and their visual space
                         plotPairedPatches(patches[patch1],
                                           patches[patch2],
@@ -1490,13 +1490,13 @@ class RetinotopicMappingTrial(object):
                         # add merged patches into the 'patches' dictionare
                         patches.update({patch1 + '+' + patch2[5:]: value[2]})
 
-                        print('merging: ' + patch1 + ' & ' + patch2 + ', overlap ratio: ' + str(value[3]))
+                        print(('merging: ' + patch1 + ' & ' + patch2 + ', overlap ratio: ' + str(value[3])))
 
             mergeIter = mergeIter + 1
 
         # remove small patches
         patches2 = dict(patches)
-        for key, value in patches2.iteritems():
+        for key, value in patches2.items():
             if (value.getArea() < smallPatchThr):
                 patches.pop(key)
 
@@ -1629,19 +1629,19 @@ class RetinotopicMappingTrial(object):
         trialDict = {}
         keysLeft = list(keysToRetain)
 
-        for key in self.__dict__.iterkeys():
+        for key in self.__dict__.keys():
 
             if key in keysToRetain:
                 if key == 'finalPatches':
                     finalPatches = {}
-                    for area, patch in self.finalPatches.iteritems():
+                    for area, patch in self.finalPatches.items():
                         finalPatches.update({area: getPatchDict(patch)})
                     trialDict.update({'finalPatches': finalPatches})
                     keysLeft.remove('finalPatches')
 
                 elif key == 'finalPathcesMarked':
                     finalPatchesMarked = {}
-                    for area, patch in self.finalPathcesMarked.iteritems():
+                    for area, patch in self.finalPathcesMarked.items():
                         finalPatchesMarked.update({area: getPatchDict(patch)})
                     trialDict.update({'finalPatchesMarked': finalPatchesMarked})
                     keysLeft.remove('finalPatchesMarked')
@@ -1654,7 +1654,7 @@ class RetinotopicMappingTrial(object):
                         pass
 
         if keysLeft:
-            print('Can not find wanted key(s): ' + str(keysLeft))
+            print(('Can not find wanted key(s): ' + str(keysLeft)))
 
         return trialDict
 
@@ -1820,7 +1820,7 @@ class RetinotopicMappingTrial(object):
             pass
 
         patchesNor = {}
-        for key, patch in patches.iteritems():
+        for key, patch in patches.items():
             patchArray = patch.array.astype(np.float)
             patchArrayNor = ni.zoom(patchArray, zoom=zoom)
             patchArrayNor = ia.center_image(patchArrayNor, centerPixel=centerPixel, newSize=mapSize,
@@ -1876,7 +1876,7 @@ class RetinotopicMappingTrial(object):
         aziGradMapY = np.sum(aziGradMap[1] * centerPatchObj.array)
         rotationAngle = -(np.arctan2(-aziGradMapX, aziGradMapY) % (2 * np.pi)) * 180 / np.pi
 
-        for key, patch in self.finalPatches.iteritems():
+        for key, patch in self.finalPatches.items():
             patchArray = patch.array.astype(np.float32)
             patchSign = patch.sign
 
@@ -1966,7 +1966,7 @@ class RetinotopicMappingTrial(object):
         f2 = plt.figure(figsize=(10, 8))
         f2.suptitle(trialName)
         f2_221 = f2.add_subplot(221)
-        for key, value in self.rawPatches.iteritems():
+        for key, value in self.rawPatches.items():
             currfig = f2_221.imshow(self.altPosMapf * value.getMask(), vmin=-40, vmax=60, interpolation='nearest')
         f2.colorbar(currfig)
         plt.tick_params(
@@ -1981,7 +1981,7 @@ class RetinotopicMappingTrial(object):
         f2_221.set_title('patches with altitude postion')
 
         f2_222 = f2.add_subplot(222)
-        for key, value in self.rawPatches.iteritems():
+        for key, value in self.rawPatches.items():
             currfig = f2_222.imshow(self.aziPosMapf * value.getMask(), vmin=-10, vmax=120, interpolation='nearest')
         f2.colorbar(currfig)
         plt.tick_params(
@@ -2001,7 +2001,7 @@ class RetinotopicMappingTrial(object):
         except:
             pass
         h = plotPatches(self.rawPatches, plotaxis=f2_223, zoom=zoom)
-        f2.colorbar(h[h.keys()[0]])
+        f2.colorbar(h[list(h.keys())[0]])
         plt.axis('off')
         plt.title('patches with center and sign')
 
@@ -2107,7 +2107,7 @@ class RetinotopicMappingTrial(object):
             except AttributeError:
                 pass
 
-        for key, patch in finalPatches.iteritems():
+        for key, patch in finalPatches.items():
             mask = patch.getMask()
             if isColor:
                 if patch.sign == 1:
@@ -2160,7 +2160,7 @@ class RetinotopicMappingTrial(object):
         else:
             plotAxis.invert_yaxis()
 
-        for key, patch in finalPatches.iteritems():
+        for key, patch in finalPatches.items():
             if isColor:
                 if patch.sign == 1:
                     plotColor = positiveColor
@@ -2206,7 +2206,7 @@ class RetinotopicMappingTrial(object):
         else:
             plotAxis.invert_yaxis()
 
-        for key, patch in patches.iteritems():
+        for key, patch in patches.items():
             if isColor:
                 if patch.sign == 1:
                     plotColor = positiveColor
@@ -2261,7 +2261,7 @@ class RetinotopicMappingTrial(object):
 
         # get fluorscence for all visual areas normalized by V1
         baselineDict = {}
-        for key, patch in finalPatches.iteritems():
+        for key, patch in finalPatches.items():
             array = patch.array
 
             if zoom != 1:
@@ -2308,7 +2308,7 @@ class RetinotopicMappingTrial(object):
 
         # get mean power amplitude for all visual areas normalized by V1
         meanPowerDict = {}
-        for key, patch in finalPatches.iteritems():
+        for key, patch in finalPatches.items():
             array = patch.array
 
             area = np.sum(array).astype(np.float)
@@ -2334,7 +2334,7 @@ class RetinotopicMappingTrial(object):
 
         # get mean power amplitude for all visual areas normalized by V1
         areaDict = {}
-        for key, patch in finalPatches.iteritems():
+        for key, patch in finalPatches.items():
             area = patch.getArea().astype(np.float) * (pixelSize ** 2)
 
             areaDict.update({key: area})
@@ -2365,7 +2365,7 @@ class RetinotopicMappingTrial(object):
 
         # get mean power amplitude for all visual areas normalized by V1
         magDict = {}
-        for key, patch in finalPatches.iteritems():
+        for key, patch in finalPatches.items():
             array = patch.array.astype(np.float)
 
             if erodeIter:
@@ -2389,7 +2389,7 @@ class RetinotopicMappingTrial(object):
         """
 
         if not hasattr(self, 'finalPatchesMarked'):
-            raise LookupError, 'Please mark the final patches first!!'
+            raise LookupError('Please mark the final patches first!!')
 
         if not hasattr(self, 'altPosMapf'):
             _ = self._getSignMap()
@@ -2450,7 +2450,7 @@ class RetinotopicMappingTrial(object):
         else:
             ax = plotAxis
 
-        for key, patch in finalPatches.iteritems():
+        for key, patch in finalPatches.items():
             currMagMap = patch.getMask() * magMap
             ax.imshow(currMagMap, cmap='hot_r', vmin=0, vmax=0.015, interpolation='nearest')
 
@@ -2464,7 +2464,7 @@ class RetinotopicMappingTrial(object):
 
         mask = np.zeros(self.altPosMap.shape)
 
-        for patch in self.finalPatches.itervalues():
+        for patch in self.finalPatches.values():
             mask = mask + patch.array.astype(np.float)
 
         mask = ni.binary_closing(mask,
@@ -2521,7 +2521,7 @@ class RetinotopicMappingTrial(object):
     def plotPatchesWithName(self, patchDict, plotAxis=None):
 
         if not hasattr(self,
-                       patchDict): raise LookupError, 'This RetinotopicMappingTrial object does not have "' + patchDict + '" attribute!'
+                       patchDict): raise LookupError('This RetinotopicMappingTrial object does not have "' + patchDict + '" attribute!')
         patchesForPlotting = self.__dict__[patchDict]
 
         if plotAxis is None: f = plt.figure(); plotAxis = f.add_subplot(111)
@@ -2529,7 +2529,7 @@ class RetinotopicMappingTrial(object):
         plotAxis.figure.suptitle(self.getName())
         plotPatches(patchesForPlotting, plotaxis=plotAxis, markersize=0)
 
-        for key, patch in patchesForPlotting.iteritems():
+        for key, patch in patchesForPlotting.items():
             center = patch.getCenter()
             plotAxis.text(center[1], center[0], key, verticalalignment='center', horizontalalignment='center')
 
@@ -2548,14 +2548,14 @@ class RetinotopicMappingTrial(object):
             self.processTrial()
 
         visualFieldOrigin = self.getVisualFieldOrigin()
-        figList, axList = pt.grid_axis(3, 4, len(finalPatches.keys()), figsize=(12, 10))
+        figList, axList = pt.grid_axis(3, 4, len(list(finalPatches.keys())), figsize=(12, 10))
 
         i = 0
 
         pixelSize = self.params['visualSpacePixelSize']
         closeIter = self.params['visualSpaceCloseIter']
 
-        for key, patch in finalPatches.iteritems():
+        for key, patch in finalPatches.items():
             currAx = axList[i]
             visualSpace, _, _, _ = patch.getVisualSpace(
                 self.altPosMapf,
@@ -2680,7 +2680,7 @@ class Patch(object):
         if sign == 1 or sign == 0 or sign == -1:
             self.sign = int(sign)
         else:
-            raise ValueError, 'Sign should be -1, 0 or 1!'
+            raise ValueError('Sign should be -1, 0 or 1!')
 
     @property
     def array(self):
@@ -2732,7 +2732,7 @@ class Patch(object):
         """
 
         if distance < 1:
-            raise LookupError, 'distance should be integer no less than 1.'
+            raise LookupError('distance should be integer no less than 1.')
 
         bigPatch = ni.binary_dilation(self.array,
                                       iterations=distance).astype(np.int)
@@ -2865,7 +2865,7 @@ class Patch(object):
 
         border = ni.binary_dilation(self.array).astype(np.int8) - self.array
 
-        for i in xrange(1, np.amax(newLabel) + 1):
+        for i in range(1, np.amax(newLabel) + 1):
             currArray = np.zeros(self.array.shape, dtype=np.int8)
             currArray[newLabel == i] = 1
             currBorder = ni.binary_dilation(currArray).astype(np.int8) - currArray
@@ -2887,7 +2887,7 @@ class Patch(object):
 
         newPatchDict = {}
 
-        for j in xrange(1, patchNum + 1):
+        for j in range(1, patchNum + 1):
 
             currPatchName = patchName + '.' + str(j)
             currArray = np.zeros(self.array.shape, dtype=np.int8)
@@ -2976,7 +2976,7 @@ class Patch(object):
 
         newPatchDict = {}
 
-        for j in xrange(1, patchNum + 1):
+        for j in range(1, patchNum + 1):
 
             currPatchName = patchName + '.' + str(j)
             currArray = np.zeros(self.array.shape, dtype=np.int8)

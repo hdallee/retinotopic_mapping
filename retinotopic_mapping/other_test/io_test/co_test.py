@@ -48,7 +48,7 @@ if __name__ == "__main__":
         time.sleep(1.0)
 
         for i in range(100):
-            print ci.read().value
+            print(ci.read().value)
 
         time.sleep(1.0)
 

@@ -37,7 +37,7 @@ from ctypes import create_string_buffer, c_double, c_void_p, c_char_p
 # System Object
 ##############################################################################
 
-system_function_list = [name for name in function_dict.keys() if \
+system_function_list = [name for name in list(function_dict.keys()) if \
                         "DAQmxGetSys" in name]
 
 def _create_system_method(func):
@@ -120,7 +120,7 @@ del system_function_list
 # Device Object
 ##############################################################################
 
-device_func_list = [name for name in function_dict.keys() if \
+device_func_list = [name for name in list(function_dict.keys()) if \
                     len(function_dict[name]['arg_type']) > 0 and \
                     (function_dict[name]['arg_type'][0] is c_char_p) and \
                     'device' in function_dict[name]['arg_name'][0]]
@@ -265,7 +265,7 @@ class BaseTask(Task):
             self.stop()
         except Exception as e:
             ##TODO: catch specific type
-            print e
+            print(e)
             pass
         self.ClearTask()
 
@@ -332,7 +332,7 @@ class BaseTask(Task):
             self.ResetSampClkTimebaseDiv()
         elif divisor > 1:
             self.SetSampClkTimebaseDiv(divisor)
-            print divisor
+            print(divisor)
         else:
             raise ValueError("Divisor must be between 1 and 2^32")
 
@@ -1989,4 +1989,4 @@ if __name__ == '__main__':
 
     import numpy as np
     data = np.fromfile(file_name, dtype=np.uint32)
-    print data
+    print(data)

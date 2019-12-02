@@ -4,7 +4,7 @@ from retinotopic_mapping.MonitorSetup import Monitor, Indicator
 from retinotopic_mapping.DisplayStimulus import DisplaySequence
 
 # Initialize Monitor object
-mon = Monitor(resolution=(1200, 1920), dis=15., mon_width_cm=52., mon_height_cm=32.)
+mon = Monitor(resolution=(768, 1360), dis=15., mon_width_cm=52., mon_height_cm=32.)
 
 # Initialize Inicator object
 ind = Indicator(mon)

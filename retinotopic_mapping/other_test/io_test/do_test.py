@@ -23,6 +23,6 @@ if __name__ == '__main__':
         do.start()
         do.WaitUntilTaskDone(10)
         do.stop()
-        print time.clock()
+        print(time.clock())
 
 

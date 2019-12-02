@@ -14,7 +14,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 from tools import FileTools as ft
-from tools.IO import nidaq as iodaq
+# for testing without NI DAQ card
+nipresent = 0
+if nipresent:
+    from .tools.IO import nidaq as iodaq
 
 try:
     import skimage.external.tifffile as tf
@@ -92,7 +95,7 @@ class DisplaySequence(object):
     Takes care of high level management of your computer
     hardware with respect to its interactions within a given experiment.
     Stimulus presentation routines are specified and external connection
-    to National Instuments hardware devices is provided. Also takes care
+    to National Instruments hardware devices is provided. Also takes care
     of the logging of relevant experimental data collected and where it
     will be stored on the computer used for the experiment.
 
@@ -187,7 +190,7 @@ class DisplaySequence(object):
         """
 
         self.sequence = None
-        self.seq_log = {}
+        # self.seq_log = {}
         self.identifier = str(identifier)
         self.psychopy_mon = psychopy_mon
         self.is_interpolate = is_interpolate
@@ -225,7 +228,7 @@ class DisplaySequence(object):
         if display_iter % 1 == 0:
             self.display_iter = display_iter
         else:
-            raise ArithmeticError, "`display_iter` should be a whole number."
+            raise ArithmeticError("`display_iter` should be a whole number.")
 
         self.log_dir = log_dir
         self.backupdir = backupdir
@@ -250,7 +253,7 @@ class DisplaySequence(object):
             'stimulation') after displayed.
         """
         if len(any_array.shape) != 3:
-            raise LookupError, "Input numpy array should have dimension of 3!"
+            raise LookupError("Input numpy array should have dimension of 3!")
 
         vmax = np.amax(any_array).astype(np.float32)
         vmin = np.amin(any_array).astype(np.float32)
@@ -262,7 +265,7 @@ class DisplaySequence(object):
             if type(log_dict) is dict:
                 self.seq_log = log_dict
             else:
-                raise ValueError, '`log_dict` should be a dictionary!'
+                raise ValueError('`log_dict` should be a dictionary!')
         else:
             self.seq_log = {}
         self.clear()
@@ -358,11 +361,11 @@ class DisplaySequence(object):
             if max_index >= self.sequence.shape[0] or min_index < 0:
                 raise ValueError('Max display index range: {} is out of self.sequence frame range: {}.'
                                  .format((min_index, max_index), (0, self.sequence.shape[0] - 1)))
-            if 'frames_unique' not in self.seq_log['stimulation'].keys():
+            if 'frames_unique' not in list(self.seq_log['stimulation'].keys()):
                 raise LookupError('"frames_unique" is not found in self.seq_log["stimulation"]. This'
                                   'is required when display by index.')
         else:
-            if 'frames' not in self.seq_log['stimulation'].keys():
+            if 'frames' not in list(self.seq_log['stimulation'].keys()):
                 raise LookupError('"frames" is not found in self.seq_log["stimulation"]. This'
                                   'is required when display by full sequence.')
 
@@ -505,8 +508,8 @@ class DisplaySequence(object):
             print('Trigger detected. Start displaying...\n\n')
             return True
         else:
-            raise NameError, "`trigger` not in " \
-                             "{'negative_edge','positive_edge', 'high_level','low_level'}!"
+            raise NameError("`trigger` not in " \
+                             "{'negative_edge','positive_edge', 'high_level','low_level'}!")
 
     def _get_file_name(self):
         """
@@ -541,7 +544,7 @@ class DisplaySequence(object):
             iter_frame_num = len(index_to_display)
         else:
             iter_frame_num = self.sequence.shape[0]
-            index_to_display = range(iter_frame_num)
+            index_to_display = list(range(iter_frame_num))
 
         # print('frame per iter: {}'.format(iter_frame_num))
 
@@ -622,7 +625,7 @@ class DisplaySequence(object):
     def _update_display_status(self):
 
         if self.keep_display is None:
-            raise LookupError, 'self.keep_display should start as True'
+            raise LookupError('self.keep_display should start as True')
 
         # check keyboard input 'q' or 'escape'
         keyList = event.getKeys(['q', 'escape'])
@@ -635,7 +638,7 @@ class DisplaySequence(object):
         if display_iter % 1 == 0:
             self.display_iter = display_iter
         else:
-            raise ArithmeticError, "`display_iter` should be a whole number."
+            raise ArithmeticError("`display_iter` should be a whole number.")
         self.clear()
 
     def save_log(self):

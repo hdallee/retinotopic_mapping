@@ -663,8 +663,8 @@ class UniformContrast(Stim):
                 full_sequence[i] = display
 
             # Insert indicator pixels
-            full_sequence[i, indicator_height_min:indicator_height_max,
-                          indicator_width_min:indicator_width_max] = frame[1]
+            full_sequence[i, int(indicator_height_min):int(indicator_height_max),
+                          int(indicator_width_min):int(indicator_width_max)] = frame[1]
 
         monitor_dict = dict(self.monitor.__dict__)
         indicator_dict = dict(self.indicator.__dict__)
@@ -714,7 +714,7 @@ class UniformContrast(Stim):
                           dtype=np.float32) * self.color
 
         if not (self.coordinate == 'degree' or self.coordinate == 'linear'):
-            raise LookupError, "`coordinate` value not in {'degree','linear'}"
+            raise LookupError("`coordinate` value not in {'degree','linear'}")
 
         for i in range(len(self.frames)):
             curr_frame = self.frames[i]
@@ -730,8 +730,8 @@ class UniformContrast(Stim):
             full_seq[i] = curr_FC_seq
 
             if i in range(0, len(self.frames), len(self.frames) / 10):
-                print('Generating numpy sequence: ' +
-                       str(int(100 * (i + 1) / len(self.frames))) + '%')
+                print(('Generating numpy sequence: ' +
+                       str(int(100 * (i + 1) / len(self.frames))) + '%'))
 
         mondict = dict(self.monitor.__dict__)
         indicator_dict = dict(self.indicator.__dict__)
@@ -870,7 +870,7 @@ class SinusoidalLuminance(Stim):
         midgap_ind = [0] * int(self.midgap_dur * self.monitor.refresh_rate)
 
         frames_per_cycle = int(np.round(self.monitor.refresh_rate / self.frequency))
-        cycle_ind = midgap_ind + range(1, frames_per_cycle + 1)
+        cycle_ind = midgap_ind + list(range(1, frames_per_cycle + 1))
 
         display_ind = cycle_ind * self.cycle_num
         display_ind = display_ind[len(midgap_ind):]
@@ -910,8 +910,8 @@ class SinusoidalLuminance(Stim):
                 full_sequence[i] = frame[1]
 
             # Insert indicator pixels
-            full_sequence[i, indicator_height_min:indicator_height_max,
-                          indicator_width_min:indicator_width_max] = frame[2]
+            full_sequence[i, int(indicator_height_min):int(indicator_height_max),
+                          int(indicator_width_min):int(indicator_width_max)] = frame[2]
 
         monitor_dict = dict(self.monitor.__dict__)
         indicator_dict = dict(self.indicator.__dict__)
@@ -1064,7 +1064,7 @@ class FlashingCircle(Stim):
         frames = frames[self.midgap_frame_num:]
 
         if not self.indicator.is_sync:
-            for frame_ind in xrange(frames.shape[0]):
+            for frame_ind in range(frames.shape[0]):
                 # mark unsynchronized indicator
                 if np.floor(frame_ind // self.indicator.frame_num) % 2 == 0:
                     frames[frame_ind, 1] = 1.
@@ -1086,7 +1086,7 @@ class FlashingCircle(Stim):
             frames = (gap, flash)
             return frames
         else:
-            raise NotImplementedError, "method not available for non-sync indicator"
+            raise NotImplementedError("method not available for non-sync indicator")
 
     def _generate_display_index(self):
         """ compute a list of indices corresponding to each frame to display. """
@@ -1103,7 +1103,7 @@ class FlashingCircle(Stim):
 
             return index_to_display
         else:
-            raise NotImplementedError, "method not available for non-sync indicator"
+            raise NotImplementedError("method not available for non-sync indicator")
 
     def generate_movie_by_index(self):
         """ compute the stimulus movie to be displayed by index. """
@@ -1121,14 +1121,14 @@ class FlashingCircle(Stim):
                                                    num_pixels_height),
                                                    dtype=np.float32)
 
-        indicator_width_min = (self.indicator.center_width_pixel
-                               - self.indicator.width_pixel / 2)
-        indicator_width_max = (self.indicator.center_width_pixel
-                               + self.indicator.width_pixel / 2)
-        indicator_height_min = (self.indicator.center_height_pixel
-                                - self.indicator.height_pixel / 2)
-        indicator_height_max = (self.indicator.center_height_pixel
-                                + self.indicator.height_pixel / 2)
+        indicator_width_min = int((self.indicator.center_width_pixel
+                               - self.indicator.width_pixel / 2))
+        indicator_width_max = int((self.indicator.center_width_pixel
+                               + self.indicator.width_pixel / 2))
+        indicator_height_min = int((self.indicator.center_height_pixel
+                                - self.indicator.height_pixel / 2))
+        indicator_height_max = int((self.indicator.center_height_pixel
+                                + self.indicator.height_pixel / 2))
 
         # background = self.background * np.ones((num_pixels_width,
         #                                         num_pixels_height),
@@ -1142,7 +1142,7 @@ class FlashingCircle(Stim):
             map_azi = self.monitor.lin_coord_x
             map_alt = self.monitor.lin_coord_y
         else:
-            raise LookupError, "`coordinate` not in {'linear','degree'}"
+            raise LookupError("`coordinate` not in {'linear','degree'}")
 
         circle_mask = get_circle_mask(map_alt=map_alt, map_azi=map_azi,
                                       center=self.center, radius=self.radius,
@@ -1204,7 +1204,7 @@ class FlashingCircle(Stim):
             map_azi = self.monitor.lin_coord_x
             map_alt = self.monitor.lin_coord_y
         else:
-            raise LookupError, "`coordinate` not in {'linear','degree'}"
+            raise LookupError("`coordinate` not in {'linear','degree'}")
 
         circle_mask = get_circle_mask(map_alt=map_alt, map_azi=map_azi,
                                       center=self.center, radius=self.radius,
@@ -1221,14 +1221,14 @@ class FlashingCircle(Stim):
                 curr_FC_seq = ((circle_mask * self.color) +
                                ((-1 * (circle_mask - 1)) * background))
 
-            curr_FC_seq[indicator_height_min:indicator_height_max,
-            indicator_width_min:indicator_width_max] = curr_frame[1]
+            curr_FC_seq[int(indicator_height_min):int(indicator_height_max),
+            int(indicator_width_min):int(indicator_width_max)] = curr_frame[1]
 
             full_seq[i] = curr_FC_seq
 
-            if i in range(0, len(self.frames), len(self.frames) / 10):
-                print('Generating numpy sequence: '
-                       + str(int(100 * (i + 1) / len(self.frames))) + '%')
+            if i in range(0, len(self.frames), len(self.frames) // 10):
+                print(('Generating numpy sequence: '
+                       + str(int(100 * (i + 1) / len(self.frames))) + '%'))
 
         mondict = dict(self.monitor.__dict__)
         indicator_dict = dict(self.indicator.__dict__)
@@ -1410,7 +1410,7 @@ class SparseNoise(Stim):
                         all_grid_points[i + 1], all_grid_points[i + 2] = all_grid_points[i + 2], all_grid_points[i + 1]
                         coincident_hit_num += 1
                 iteration += 1
-                print('iteration:' + iteration + '  continous hits number:' + coincident_hit_num)
+                print(('iteration:' + iteration + '  continous hits number:' + coincident_hit_num))
                 if coincident_hit_num == 0:
                     break
 
@@ -1502,7 +1502,7 @@ class SparseNoise(Stim):
 
             return frames_unique
         else:
-            raise NotImplementedError, "method not available for non-sync indicator"
+            raise NotImplementedError("method not available for non-sync indicator")
 
     @staticmethod
     def _get_probe_index_for_one_iter_on_off(frames_unique):
@@ -1735,8 +1735,8 @@ class SparseNoise(Stim):
             indicator_width_min:indicator_width_max] = curr_frame[3]
 
             if i in range(0, len(self.frames), len(self.frames) / 10):
-                print('Generating numpy sequence: ' +
-                       str(int(100 * (i + 1) / len(self.frames))) + '%')
+                print(('Generating numpy sequence: ' +
+                       str(int(100 * (i + 1) / len(self.frames))) + '%'))
 
         # generate log dictionary
         mondict = dict(self.monitor.__dict__)
@@ -2166,7 +2166,7 @@ class LocallySparseNoise(Stim):
 
             frames_unique = self._generate_frames_for_index_display()
             if len(frames_unique) % 2 == 1:
-                display_num = (len(frames_unique) - 1) / 2  # number of each unique display frame
+                display_num = (len(frames_unique) - 1) // 2  # number of each unique display frame
             else:
                 raise ValueError('LocallySparseNoise: number of unique frames is not correct. Should be odd.')
 
@@ -2186,7 +2186,7 @@ class LocallySparseNoise(Stim):
             return frames_unique, index_to_display
 
         else:
-            raise NotImplementedError, "method not available for non-sync indicator"
+            raise NotImplementedError("method not available for non-sync indicator")
 
     def generate_movie_by_index(self):
 
@@ -2231,8 +2231,8 @@ class LocallySparseNoise(Stim):
 
                 full_seq[i] = disp_mat
 
-            full_seq[i, indicator_height_min:indicator_height_max,
-            indicator_width_min:indicator_width_max] = frame[3]
+            full_seq[i, int(indicator_height_min):int(indicator_height_max),
+            int(indicator_width_min):int(indicator_width_max)] = frame[3]
 
         mondict = dict(self.monitor.__dict__)
         indicator_dict = dict(self.indicator.__dict__)
@@ -2368,7 +2368,7 @@ class DriftingGratingCircle(Stim):
                 # print(0.95 * period)
                 error_msg = ('Duration of each block times tf ' + str(tf)
                              + ' should be close to a whole number!')
-                raise ValueError, error_msg
+                raise ValueError(error_msg)
 
     @property
     def midgap_frame_num(self):
@@ -2558,7 +2558,7 @@ class DriftingGratingCircle(Stim):
 
             index_to_display_condi = []
             while len(index_to_display_condi) < len(phases):
-                index_to_display_condi += range(frame_per_cycle)
+                index_to_display_condi += list(range(frame_per_cycle))
             index_to_display_condi = index_to_display_condi[0:len(phases)]
 
             frames_unique_condi = tuple([tuple(f) for f in frames_unique_condi])
@@ -2600,7 +2600,7 @@ class DriftingGratingCircle(Stim):
                                         'index_to_display': index_to_display_condi}
                                    })
 
-            condi_keys = condi_dict.keys()
+            condi_keys = list(condi_dict.keys())
             condi_keys.sort()
 
             # handle frames_unique
@@ -2619,7 +2619,7 @@ class DriftingGratingCircle(Stim):
 
             return frames_unique, condi_ind_in_frames_unique
         else:
-            raise NotImplementedError, "method not available for non-sync indicator"
+            raise NotImplementedError("method not available for non-sync indicator")
 
     def _generate_display_index(self):
         """ compute a list of indices corresponding to each frame to display. """
@@ -2662,7 +2662,7 @@ class DriftingGratingCircle(Stim):
             coord_azi = self.monitor.lin_coord_x
             coord_alt = self.monitor.lin_coord_y
         else:
-            raise LookupError, "`coordinate` not in {'linear','degree'}"
+            raise LookupError("`coordinate` not in {'linear','degree'}")
 
         indicator_width_min = (self.indicator.center_width_pixel
                                - self.indicator.width_pixel / 2)
@@ -2704,8 +2704,8 @@ class DriftingGratingCircle(Stim):
                           (background_frame * (curr_circle_mask * -1. + 1.)))
 
             # add sync square for photodiode
-            mov[i, indicator_height_min:indicator_height_max,
-            indicator_width_min:indicator_width_max] = frame[-1]
+            mov[i, int(indicator_height_min):int(indicator_height_max),
+            int(indicator_width_min):int(indicator_width_max)] = frame[-1]
 
         mondict = dict(self.monitor.__dict__)
         indicator_dict = dict(self.indicator.__dict__)
@@ -2762,7 +2762,7 @@ class DriftingGratingCircle(Stim):
             coord_azi = self.monitor.lin_coord_x
             coord_alt = self.monitor.lin_coord_y
         else:
-            raise LookupError, "`coordinate` not in {'linear','degree'}"
+            raise LookupError("`coordinate` not in {'linear','degree'}")
 
         indicator_width_min = (self.indicator.center_width_pixel
                                - self.indicator.width_pixel / 2)
@@ -3044,7 +3044,7 @@ class StaticGratingCircle(Stim):
             index_to_display = [0] * self.pregap_frame_num
 
             for iter in range(self.iteration):
-                display_sequence = range(condition_num)
+                display_sequence = list(range(condition_num))
                 random.shuffle(display_sequence)
                 for cond_ind in display_sequence:
                     index_to_display += [0] * self.midgap_frame_num
@@ -3058,7 +3058,7 @@ class StaticGratingCircle(Stim):
 
             return frames_unique, index_to_display
         else:
-            raise NotImplementedError, "method not available for non-sync indicator."
+            raise NotImplementedError("method not available for non-sync indicator.")
 
     def generate_movie_by_index(self):
         """ compute the stimulus movie to be displayed by index. """
@@ -3079,7 +3079,7 @@ class StaticGratingCircle(Stim):
             coord_azi = self.monitor.lin_coord_x
             coord_alt = self.monitor.lin_coord_y
         else:
-            raise LookupError, "`coordinate` not in {'linear','degree'}"
+            raise LookupError("`coordinate` not in {'linear','degree'}")
 
         indicator_width_min = (self.indicator.center_width_pixel
                                - self.indicator.width_pixel / 2)
@@ -3464,7 +3464,7 @@ class StaticImages(Stim):
             index_to_display = [0] * self.pregap_frame_num
 
             for iter in range(self.iteration):
-                display_sequence = range(img_num)
+                display_sequence = list(range(img_num))
                 random.shuffle(display_sequence)
                 for cond_ind in display_sequence:
                     index_to_display += [0] * self.midgap_frame_num
@@ -3479,7 +3479,7 @@ class StaticImages(Stim):
             return frames_unique, index_to_display
 
         else:
-            raise NotImplementedError, "method not available for non-sync indicator."
+            raise NotImplementedError("method not available for non-sync indicator.")
 
     def generate_movie_by_index(self):
         """ compute the stimulus movie to be displayed by index. """
@@ -3494,7 +3494,7 @@ class StaticImages(Stim):
             coord_azi = self.monitor.lin_coord_x
             coord_alt = self.monitor.lin_coord_y
         else:
-            raise LookupError, "`coordinate` not in {'linear','degree'}"
+            raise LookupError("`coordinate` not in {'linear','degree'}")
 
         indicator_width_min = (self.indicator.center_width_pixel
                                - self.indicator.width_pixel / 2)
@@ -3610,7 +3610,7 @@ class StimulusSeparator(Stim):
             index_to_display += [0] * self.postgap_frame_num
             return frames_unique, index_to_display
         else:
-            raise NotImplementedError, "method not available for non-sync indicator."
+            raise NotImplementedError("method not available for non-sync indicator.")
 
     def generate_movie_by_index(self):
 
@@ -3623,7 +3623,7 @@ class StimulusSeparator(Stim):
             coord_azi = self.monitor.lin_coord_x
             coord_alt = self.monitor.lin_coord_y
         else:
-            raise LookupError, "`coordinate` not in {'linear','degree'}"
+            raise LookupError("`coordinate` not in {'linear','degree'}")
 
         indicator_width_min = (self.indicator.center_width_pixel
                                - self.indicator.width_pixel / 2)
@@ -3641,8 +3641,8 @@ class StimulusSeparator(Stim):
 
         for i, frame in enumerate(self.frames_unique):
             # add sync square for photodiode
-            mov[i, indicator_height_min:indicator_height_max,
-            indicator_width_min:indicator_width_max] = frame[-1]
+            mov[i, int(indicator_height_min):int(indicator_height_max),
+            int(indicator_width_min):int(indicator_width_max)] = frame[-1]
 
         mondict = dict(self.monitor.__dict__)
         indicator_dict = dict(self.indicator.__dict__)
@@ -3728,7 +3728,7 @@ class CombinedStimuli(Stim):
     def generate_movie_by_index(self):
 
         t0 = time.time()
-        print ('\n{:04.1f} min : CombinedStimulus: generating stimuli ...'.format(time.time() - t0))
+        print(('\n{:04.1f} min : CombinedStimulus: generating stimuli ...'.format(time.time() - t0)))
 
         self.frames_unique = []
         self.index_to_display = []
@@ -3768,9 +3768,9 @@ class CombinedStimuli(Stim):
 
             curr_start_frame_ind += len(curr_frames_unique)
 
-            print ('{:04.1f} min : stimulus: {:<30}; estimated display duration: {:4.1f} minute(s).'
+            print(('{:04.1f} min : stimulus: {:<30}; estimated display duration: {:4.1f} minute(s).'
                    .format((time.time() - t0) / 60., curr_stim_id,
-                           len(curr_index_to_display) / (60. * self.monitor.refresh_rate)))
+                           len(curr_index_to_display) / (60. * self.monitor.refresh_rate))))
 
         self.frames_unique = tuple([tuple(f) for f in self.frames_unique])
         self.index_to_display = list(np.concatenate(self.index_to_display, axis=0))
@@ -3898,7 +3898,7 @@ class KSstim(Stim):
             map_y = self.monitor.lin_coord_y
 
         else:
-            raise LookupError, '`coordinate` not in {"degree","linear"}'
+            raise LookupError('`coordinate` not in {"degree","linear"}')
 
         min_x = map_x.min()
         max_x = map_x.max()
@@ -3970,7 +3970,7 @@ class KSstim(Stim):
             map_x = self.monitor.lin_coord_x
             map_y = self.monitor.lin_coord_y
         else:
-            raise LookupError, '`coordinate` not in {"degree", "linear"}'
+            raise LookupError('`coordinate` not in {"degree", "linear"}')
 
         min_x = map_x.min()
         max_x = map_x.max()
@@ -3991,7 +3991,7 @@ class KSstim(Stim):
             step_x = np.arange(min_x - sweep_width,
                                max_x + step_width, step_width)[::-1]
         else:
-            raise LookupError, '`direction` not in {"B2U","U2B","L2R","R2L"}'
+            raise LookupError('`direction` not in {"B2U","U2B","L2R","R2L"}')
 
         sweep_table = []
 
@@ -4141,13 +4141,13 @@ class KSstim(Stim):
                 curr_NM_seq = ((curr_sweep * currSquare) +
                                ((-1 * (curr_sweep - 1)) * background))
 
-            curr_NM_seq[indicator_height_min:indicator_height_max,
-            indicator_width_min:indicator_width_max] = curr_frame[3]
+            curr_NM_seq[int(indicator_height_min):int(indicator_height_max),
+            int(indicator_width_min):int(indicator_width_max)] = curr_frame[3]
 
             full_seq[i] = curr_NM_seq
 
-            if i in range(0, len(self.frames), len(self.frames) / 10):
-                print('Generating numpy sequence: ' + str(int(100 * (i + 1) / len(self.frames))) + '%')
+            if i in range(0, len(self.frames), len(self.frames) // 10):
+                print(('Generating numpy sequence: ' + str(int(100 * (i + 1) / len(self.frames))) + '%'))
 
         mondict = dict(self.monitor.__dict__)
         indicator_dict = dict(self.indicator.__dict__)
@@ -4172,7 +4172,7 @@ class KSstim(Stim):
             self.direction = direction
             self.clear()
         else:
-            raise LookupError, '`direction` not in {"B2U","U2B","L2R","R2L"}'
+            raise LookupError('`direction` not in {"B2U","U2B","L2R","R2L"}')
 
     def set_sweep_sigma(self, sweepSigma):
         self.sweepSigma = sweepSigma

@@ -401,7 +401,7 @@ class TestSimulation(unittest.TestCase):
         # print len(conditions)
         assert (len(conditions) == 1)
         frames_unique_condi, index_to_display_condi = dgc._generate_frames_for_index_display_condition(conditions[0])
-        assert (index_to_display_condi == range(30) * 4)
+        assert (index_to_display_condi == list(range(30)) * 4)
         assert (max(index_to_display_condi) == len(frames_unique_condi) - 1)
         # print '\n'.join([str(f) for f in frames_unique_condi])
         assert ([f[0] for f in frames_unique_condi] == [1] * 30)
@@ -424,7 +424,7 @@ class TestSimulation(unittest.TestCase):
             assert (len(frame) == 9)
 
         import numpy as np
-        for cond, ind in condi_ind_in_frames_unique.items():
+        for cond, ind in list(condi_ind_in_frames_unique.items()):
             assert (len(ind) == 120)
             assert (ind[0] % 20 == 1)
             assert (len(np.unique(ind)) == 60 or len(np.unique(ind)) == 20)
@@ -779,9 +779,9 @@ class TestSimulation(unittest.TestCase):
         # print(ind)
 
         assert(ind == [0] * 120 +
-                      range(1, 16) + [0] * 30 +
-                      range(1, 16) + [0] * 30 +
-                      range(1, 16) +
+                      list(range(1, 16)) + [0] * 30 +
+                      list(range(1, 16)) + [0] * 30 +
+                      list(range(1, 16)) +
                       [0] * 180)
 
 

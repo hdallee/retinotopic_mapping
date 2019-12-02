@@ -29,7 +29,7 @@ for k, trialName in enumerate(trialList):
     trialPath = os.path.join(currFolder,trialName)
     trial = rm.loadTrial(trialPath)
     finalPatches = getattr(trial,patchesToShow)
-    numOfPatches = len(finalPatches.keys())
+    numOfPatches = len(list(finalPatches.keys()))
     rowNum = numOfPatches // columnNum + 1
     f = plt.figure(figsize=(10,10))
     f.suptitle(trialName)
@@ -37,7 +37,7 @@ for k, trialName in enumerate(trialList):
     rm.plotPatches(finalPatches,plotaxis=ax,markersize=0)
     
     
-    for key,patch in finalPatches.iteritems():
+    for key,patch in finalPatches.items():
         
         center = patch.getCenter()
         ax.text(center[1],center[0],key,verticalalignment='center', horizontalalignment='center')
