@@ -82,13 +82,13 @@ with closing(Hdf5io(camcfg.CAMERA['output'] if save_to_hdf5 else camcfg.CAMERA['
                     filelocking=False)) as output_file:
     output_file.stimulus_parameters = stimulus_parameters
     output_file.stimulus_frame_timestamps = ds.frame_ts_start
-    # output_file.stimulusLog = pickle.dumps(ds.seq_log, protocol=4)  # protocol=2
-    output_file.stimulusLog = ds.seq_log
-    print(output_file.stimulusLog)
+    output_file.stimulusLog = pickle.dumps(ds.seq_log, protocol=4)  # protocol=2
+    # output_file.stimulusLog = ds.seq_log # These 3 lines are just playing around, seeing whether something I try works.
+    # print(output_file.stimulusLog)
     # output_file.stimulusLog = output_file.stimulusLog.decode("utf-8")
     output_file.saving_complete = True
-    # output_file.dropped_stimulus_frames = ds.window.nDroppedFrames
-    output_file.save(['stimulus_frame_timestamps', 'saving_complete']) # 'stimulusLog', excluded
+    # output_file.dropped_stimulus_frames = ds.window.nDroppedFrames # In cortical mapping this window was an attribute of DisplaySequence, in retinotopic it isn't
+    output_file.save(['stimulus_frame_timestamps', 'stimulusLog', 'saving_complete']) # runs with 'stimulusLog', excluded
     output_file.saving_complete = True
     output_file.save('saving_complete')
 # print(('Overall, %i frames were dropped.' % ds.window.nDroppedFrames))
