@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 import os
 import shutil
-from tools import ImageAnalysis as ia
+from retinotopic_mapping.tools import ImageAnalysis as ia
 
 try:
     import skimage.external.tifffile as tf

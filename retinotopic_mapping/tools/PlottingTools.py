@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import matplotlib.colors as col
 import scipy.ndimage as ni
-from tools import ImageAnalysis as ia
+from retinotopic_mapping.tools import ImageAnalysis as ia
 
 try:
     import skimage.external.tifffile as tf

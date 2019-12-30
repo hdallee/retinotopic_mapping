@@ -13,11 +13,11 @@ import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-from tools import FileTools as ft
+from retinotopic_mapping.tools import FileTools as ft
 # for testing without NI DAQ card
 nipresent = 0
 if nipresent:
-    from .tools.IO import nidaq as iodaq
+    from retinotopic_mapping.tools.IO import nidaq as iodaq
 
 try:
     import skimage.external.tifffile as tf
@@ -309,7 +309,7 @@ class DisplaySequence(object):
             self.sequence, self.seq_log = stim.generate_movie()
             self.clear()
 
-    def trigger_display(self):
+    def trigger_display(self, fullscr=False):
         """
         Display stimulus, initialize and perform global experimental routines.
 
@@ -387,7 +387,7 @@ class DisplaySequence(object):
         # start psychopy window
         window = visual.Window(size=resolution,
                                monitor=self.psychopy_mon,
-                               fullscr=True,
+                               fullscr=fullscr,
                                screen=self.display_screen,
                                color=self.initial_background_color)
 

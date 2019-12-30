@@ -12,7 +12,7 @@ from visexpA.engine.misc.introspect import nameless_dummy_object_with_methods
 from visexpA.engine.datahandlers.ximea_camera import XimeaCamera
 from contextlib import closing
 
-basedir = '/home/abel/data'
+basedir = '/mnt/datafast/temp'
 
 camcfg = nameless_dummy_object_with_methods()
 file_ts = str(int(time.time()))
@@ -69,7 +69,7 @@ fc = stim.FlashingCircle(monitor=mon, indicator=indicator, coordinate='degree', 
 ds.set_stim(fc)
 camera.trigger.set()
 time.sleep(0.1)  # let the first camera frames be below target 10Hz (memory allocation or who knows why)
-ds.trigger_display()
+ds.trigger_display(fullscr=False)
 plt.show()
 camera.trigger.clear()
 
@@ -78,8 +78,7 @@ if camera.camera_error_trigger.is_set():  # do not save incomplete data
     sys.exit(0)
 # print('Seconds elapsed between camera stop time and stimulus end: {0}'.format(time.time()-camera.stopped_time))
 camera.join()
-with closing(Hdf5io(camcfg.CAMERA['output'] if save_to_hdf5 else camcfg.CAMERA['output'] + '/timing.hdf5',
-                    filelocking=False)) as output_file:
+with Hdf5io(camcfg.CAMERA['output'] if save_to_hdf5 else camcfg.CAMERA['output'] + '/timing.hdf5', filelocking=False) as output_file:
     output_file.stimulus_parameters = stimulus_parameters
     output_file.stimulus_frame_timestamps = ds.frame_ts_start
     output_file.stimulusLog = pickle.dumps(ds.seq_log, protocol=4)  # protocol=2
@@ -98,7 +97,7 @@ print('Data acquisition done. Loading data and averaging frames...')
 from matplotlib import cm
 from visexpA.engine.dataprocessors.image import WideFieldData
 
-with closing(WideFieldData(output_file.filename, filelocking=False)) as datahandler:
+with WideFieldData(output_file.filename, filelocking=False) as datahandler:
     camera_mean = datahandler.camera_frames['raw'].mean(axis=0)
 plt.imshow(camera_mean, cmap=cm.gray)
 plt.show()

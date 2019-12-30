@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 import random
 import time
 import h5py
-from tools import ImageAnalysis as ia
-from tools import FileTools as ft
+from retinotopic_mapping.tools import ImageAnalysis as ia
+from retinotopic_mapping.tools import FileTools as ft
 
 try:
     import skimage.external.tifffile as tf
