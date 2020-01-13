@@ -10,9 +10,8 @@ import pickle
 from visexpA.engine.datahandlers.hdf5io import Hdf5io
 from visexpA.engine.misc.introspect import nameless_dummy_object_with_methods
 from visexpA.engine.datahandlers.ximea_camera import XimeaCamera
-from contextlib import closing
 
-basedir = '/mnt/datafast/temp'
+basedir = '/home/abel/data'
 
 camcfg = nameless_dummy_object_with_methods()
 file_ts = str(int(time.time()))
