@@ -11,5 +11,5 @@ ks = stim.KSstim(mon, ind)
 ds = DisplaySequence(log_dir="C:/data", is_by_index=False)
 
 ds.set_stim(ks)
-ds.trigger_display()
+ds.trigger_display(fullscr=True)
 plt.show()
