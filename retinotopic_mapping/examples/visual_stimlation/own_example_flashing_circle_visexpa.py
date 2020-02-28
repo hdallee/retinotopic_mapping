@@ -32,8 +32,8 @@ stimulus_parameters[
     'sweep_width'] = 20  # how many visual degrees the bar is covering, i.e. longitudinal dimension of the bar
 stimulus_parameters[
     'repeat_stimulus'] = 10 if experiment_type != 'overview' else 1  # how many time the stim is played; use 1 for surface scan, 10 when focusing below surface
-stimulus_parameters['monitor_width_cm'] = 88.7
-stimulus_parameters['monitor_height_cm'] = 49.88
+stimulus_parameters['monitor_width_cm'] = 33.28
+stimulus_parameters['monitor_height_cm'] = 26.624
 stimulus_parameters['gaze_center_to_monitor_top_edge_cm'] = 33.1
 stimulus_parameters['gaze_center_to_monitor_anterior_edge_cm'] = 46.6
 camera_downsample = 1 if stimulus_parameters['repeat_stimulus'] == 1 else 2  # default is binning
@@ -43,7 +43,7 @@ camcfg.CAMERA = {'simulator': False, 'output': outpath, 'exposure_gain': [28000,
 camera = XimeaCamera(config=camcfg) # expected_recording_length=stimulus_parameters['repeat_stimulus'] * 90)
 camera.start()
 
-mon = Monitor(resolution=(768, 1360), dis=13.0, mon_width_cm=stimulus_parameters['monitor_width_cm'],
+mon = Monitor(resolution=(1024, 1280), dis=20.0, mon_width_cm=stimulus_parameters['monitor_width_cm'],
             mon_height_cm=stimulus_parameters['monitor_height_cm'],
             C2T_cm=stimulus_parameters['gaze_center_to_monitor_top_edge_cm'],
             C2A_cm=stimulus_parameters['gaze_center_to_monitor_anterior_edge_cm'],
@@ -63,8 +63,7 @@ ds = DisplaySequence(log_dir=r'C:\data', display_screen=0, backupdir=None,
 fc = stim.FlashingCircle(monitor=mon, indicator=indicator, coordinate='degree', center=(0., 60.),
                          radius=10., is_smooth_edge=False, smooth_width_ratio=0.2,
                          smooth_func=stim.blur_cos, color=1., flash_frame_num=60,
-                         pregap_dur=2., postgap_dur=3., background=-1., midgap_dur=1.,
-                         iteration=1)
+                         pregap_dur=2., postgap_dur=3., midgap_dur=1., iteration=1)
 ds.set_stim(fc)
 camera.trigger.set()
 time.sleep(0.1)  # let the first camera frames be below target 10Hz (memory allocation or who knows why)
