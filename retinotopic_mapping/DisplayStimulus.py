@@ -14,6 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 from retinotopic_mapping.tools import FileTools as ft
+from visexpA.engine.datahandlers.labjack import U3Wrap
 # for testing without NI DAQ card
 nipresent = 0
 if nipresent:
@@ -179,6 +180,7 @@ class DisplaySequence(object):
                  trigger_NI_port=1,
                  trigger_NI_line=0,
                  is_sync_pulse=False,
+                 is_sync_pulse_LJ=False,
                  sync_pulse_NI_dev='Dev1',
                  sync_pulse_NI_port=1,
                  sync_pulse_NI_line=1,
@@ -202,6 +204,7 @@ class DisplaySequence(object):
         self.trigger_NI_line = trigger_NI_line
         self.trigger_event = trigger_event
         self.is_sync_pulse = is_sync_pulse
+        self.is_sync_pulse_LJ = is_sync_pulse_LJ
         self.sync_pulse_NI_dev = sync_pulse_NI_dev
         self.sync_pulse_NI_port = sync_pulse_NI_port
         self.sync_pulse_NI_line = sync_pulse_NI_line
@@ -406,6 +409,7 @@ class DisplaySequence(object):
             else:
                 time.sleep(5.)  # wait remote object to start
 
+
         # actual display
         self._display(window=window, stim=stim)
 
@@ -537,7 +541,7 @@ class DisplaySequence(object):
         """
         frame_ts_start = []
         frame_ts_end = []
-        start_time = time.clock()
+        start_time = time.perf_counter()
 
         if self.is_by_index:
             index_to_display = self.seq_log['stimulation']['index_to_display']
@@ -554,6 +558,16 @@ class DisplaySequence(object):
                                                 self.sync_pulse_NI_line)
             syncPulseTask.StartTask()
             _ = syncPulseTask.write(np.array([0]).astype(np.uint8))
+        if self.is_sync_pulse_LJ:
+            with U3Wrap() as jack:
+                jack.start()
+                print("sync_thread started")
+            '''
+            jack = U3Wrap()
+            jack.start()
+            print("sync_thread started")
+            '''
+
 
         i = 0
         self.displayed_frames = []
@@ -584,9 +598,12 @@ class DisplaySequence(object):
             if self.is_sync_pulse:
                 _ = syncPulseTask.write(np.array([1]).astype(np.uint8))
 
-            # save frame start timestamp
-            frame_ts_start.append(time.clock() - start_time)
 
+            # save frame start timestamp
+            frame_ts_start.append(time.perf_counter() - start_time)
+
+            # set sync_pulse start
+            window.callOnFlip(jack.trigger.set)
             # show visual stim
             window.flip()
 
@@ -597,7 +614,7 @@ class DisplaySequence(object):
                 self.displayed_frames.append(self.seq_log['stimulation']['frames'][frame_index])
 
             # save frame end timestamp
-            frame_ts_end.append(time.clock() - start_time)
+            frame_ts_end.append(time.perf_counter() - start_time)
 
             # set sync pulse end signal
             if self.is_sync_pulse:
@@ -606,7 +623,7 @@ class DisplaySequence(object):
             self._update_display_status()
             i += 1
 
-        stop_time = time.clock()
+        stop_time = time.perf_counter()
         window.close()
 
         if self.is_sync_pulse:
