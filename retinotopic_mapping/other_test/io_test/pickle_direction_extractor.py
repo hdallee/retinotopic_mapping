@@ -45,8 +45,8 @@ def extract_dir_order_of_iteration(dir_list, all_dirs):
     # print(dir_list[2460])
     return last_frame_of_first_iteration
 
-path_to_file = r'/home/abel/Egyetem/FOT/FOT_clean/retinotopic_mapping-Git_master/retinotopic_mapping/examples/visual_stimlation/C:/data/visual_display_log/'
-file_name = '200116155917-DriftingGratingCircle-MTest-Name-000-notTriggered-complete.pkl'
+path_to_file = r'/home/abel/PycharmProjects/Stimulus_gen/retinotopic_mapping/retinotopic_mapping/examples/visual_stimlation/C:/data/visual_display_log/'
+file_name = '200309140640-DriftingGratingCircle-MTest-Name-000-notTriggered-complete.pkl'
 file_full_path = path_to_file+file_name
 
 all_dirs = [0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0]
