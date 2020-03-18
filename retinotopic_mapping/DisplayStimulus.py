@@ -558,16 +558,17 @@ class DisplaySequence(object):
                                                 self.sync_pulse_NI_line)
             syncPulseTask.StartTask()
             _ = syncPulseTask.write(np.array([0]).astype(np.uint8))
+
         if self.is_sync_pulse_LJ:
             with U3Wrap() as jack:
                 jack.start()
                 print("sync_thread started")
-            '''
-            jack = U3Wrap()
-            jack.start()
-            print("sync_thread started")
-            '''
 
+
+        #declaring variable to check for new block start
+        prev_dir = -1.0
+
+        # print(self.seq_log['stimulation']['dire_list']) Nem sorrendben írja ki
 
         i = 0
         self.displayed_frames = []
@@ -601,9 +602,21 @@ class DisplaySequence(object):
 
             # save frame start timestamp
             frame_ts_start.append(time.perf_counter() - start_time)
+            '''
+            if self.seq_log['stimulation']['frames_unique'][index_to_display[i]][4] != prev_dir:
+                if self.seq_log['stimulation']['frames_unique'][index_to_display[i]][4] == None:
+                    print(f"Sending Gap signal! {i}")
+                    jack.set_do_state(state=0)
+                    print(jack.jack.getDIState(3)) # debug only
+                else:
+                    print(f"Sending new block signal! {i}")
+                    jack.set_do_state(state=1)
+                    print(jack.jack.getDIState(3)) # debug only
+            '''
 
             # set sync_pulse start
             window.callOnFlip(jack.trigger.set)
+
             # show visual stim
             window.flip()
 
@@ -615,6 +628,10 @@ class DisplaySequence(object):
 
             # save frame end timestamp
             frame_ts_end.append(time.perf_counter() - start_time)
+            '''
+            #save current direction
+            prev_dir = self.seq_log['stimulation']['frames_unique'][index_to_display[i]][4]
+            '''
 
             # set sync pulse end signal
             if self.is_sync_pulse:
