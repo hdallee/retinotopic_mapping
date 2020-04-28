@@ -2,23 +2,14 @@ import pickle
 import heapq
 
 def first_index_finder(list, dir):
-    ind = 0
-    for x in list:
-        if x == dir:
-            return ind
-        ind = ind+1
+    for x in enumerate(list):
+        if x[1] == dir:
+            return x[0]
 
 def last_index_finder(list, dir):
     for x in range(len(list)):
         if list[x] == dir and list[x+1]==None:
             return x
-
-def count_occurence(list, dir):
-    count = 0
-    for x in list:
-        if x == dir:
-            count += 1
-    return count
 
 def extract_dir_order_of_iteration(dir_list, all_dirs):
 
@@ -50,9 +41,6 @@ file_name = '200309140640-DriftingGratingCircle-MTest-Name-000-notTriggered-comp
 file_full_path = path_to_file+file_name
 
 all_dirs = [0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0]
-# we extract num iterations later from the file
-num_iterations = 0
-
 
 with open(file_full_path, 'rb') as f:
     data = pickle.load(f)
