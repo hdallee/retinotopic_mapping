@@ -2315,7 +2315,7 @@ class DriftingGratingCircle(Stim):
                  center=(0., 60.), sf_list=(0.08,), tf_list=(4.,), dire_list=(0.,),
                  con_list=(0.5,), radius_list=(10.,), block_dur=2., midgap_dur=0.5,
                  iteration=1, pregap_dur=2., postgap_dur=3., is_smooth_edge=False,
-                 smooth_width_ratio=0.2, smooth_func=blur_cos, is_blank_block=True):
+                 smooth_width_ratio=0.2, smooth_func=blur_cos, is_blank_block=True, tex='sqr'):
         """
         Initialize `DriftingGratingCircle` stimulus object, inherits Parameters
         from `Stim` class
