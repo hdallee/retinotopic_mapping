@@ -13,7 +13,7 @@ uc = stim.UniformContrast(mon, ind, duration=2, color=1)
 repeated_stim = stim.CombinedStimuli(mon, ind, background=-1, pregap_dur=2, postgap_dur=0)
 repeated_stim.set_stimuli([uc]*10) # set the number of iterations here
 
-ds = DisplaySequence(log_dir="C:/data", is_by_index=True, display_screen=1, is_sync_pulse_LJ=True)
+ds = DisplaySequence(log_dir="C:/data", is_by_index=True, display_screen=1, is_sync_pulse_LJ=False)
 
 ds.set_stim(repeated_stim)
 ds.trigger_display(fullscr=False)
