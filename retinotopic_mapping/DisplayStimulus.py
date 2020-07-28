@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import time
 from retinotopic_mapping.tools import FileTools as ft
 from visexpA.engine.datahandlers.labjack import U3Wrap
+from visexpA.engine.datahandlers.photonfocus_camera import PhotonfocusCamera, PF_Fluorescent_Config, PF_Intrinsic_Config
 # for testing without NI DAQ card
 nipresent = 0
 if nipresent:
@@ -142,6 +143,9 @@ class DisplaySequence(object):
             defaults to `0`.
         is_sync_pulse : bool, optional
             defaults to `True`.
+        is_sync_pulse_LJ : bool, optional
+            defaults to 'False'
+            Set to True if you use a Labjack device for sending sync pulses.
         sync_pulse_NI_dev : str, optional
             defaults to 'Dev1'.
         sync_pulse_NI_port : int, optional
@@ -185,6 +189,7 @@ class DisplaySequence(object):
                  sync_pulse_NI_dev='Dev1',
                  sync_pulse_NI_port=1,
                  sync_pulse_NI_line=1,
+                 is_camera=False,
                  display_screen=0,
                  initial_background_color=0.,
                  color_weights=(1., 1., 1.)):
@@ -209,6 +214,7 @@ class DisplaySequence(object):
         self.sync_pulse_NI_dev = sync_pulse_NI_dev
         self.sync_pulse_NI_port = sync_pulse_NI_port
         self.sync_pulse_NI_line = sync_pulse_NI_line
+        self.is_camera = is_camera
         self.display_screen = display_screen
 
         if len(color_weights) != 3:
@@ -565,9 +571,16 @@ class DisplaySequence(object):
                 jack.start()
                 print("sync_thread started")
 
+        if self.is_camera:
+            config = PF_Intrinsic_Config()
+            with PhotonfocusCamera(config) as camera:
+                camera.start()
+                print("Camera thread started.")
+                camera.trigger.set()
+
 
         #declaring variable to check for new block start
-        prev_dir = -1.0
+        # prev_dir = -1.0
 
         # print(self.seq_log['stimulation']['dire_list']) Nem sorrendben írja ki
 
