@@ -1,4 +1,4 @@
-name: fot_clean
+name: stimulus_gen_3_7
 channels:
   - defaults
 dependencies:

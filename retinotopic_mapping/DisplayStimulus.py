@@ -616,7 +616,8 @@ class DisplaySequence(object):
             '''
 
             # set sync_pulse start
-            window.callOnFlip(jack.trigger.set)
+            if self.is_sync_pulse_LJ:
+                window.callOnFlip(jack.trigger.set)
 
             # show visual stim
             window.flip()
