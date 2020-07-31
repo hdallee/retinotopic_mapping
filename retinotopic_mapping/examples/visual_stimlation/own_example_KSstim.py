@@ -8,7 +8,7 @@ mon = Monitor(resolution=(768, 1360), dis=15., mon_width_cm=52., mon_height_cm=3
 ind = Indicator(mon)
 
 # ks = stim.KSstim(mon, ind)
-ds = DisplaySequence(log_dir="C:/data", is_by_index=False)
+ds = DisplaySequence(log_dir="data", is_by_index=False)
 
 # ds.set_stim(ks)
 fc = stim.FlashingCircle(monitor=mon, indicator=ind, coordinate='degree', center=(0., 60.),
