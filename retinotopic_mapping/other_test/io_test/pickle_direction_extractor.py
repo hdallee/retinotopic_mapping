@@ -16,10 +16,10 @@ def first_index_finder(list, dir):
 
 def last_index_finder(list, dir):
     """
-    Finds and returns the index of the last frame in list where the stimulus direction was dir.
+    Finds and returns the index of the first frame where that frame is followed by gap.
     :param list: The list which holds the direction values of every displayed frame.
     :param dir: The direction we are looking for.
-    :return: The index of the first occurrence of dir in list.
+    :return: The index of the first last occurrence of dir in list.
     """
     for x in range(len(list)):
         if list[x] == dir and list[x+1]==None:
