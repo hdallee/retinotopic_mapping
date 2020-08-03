@@ -571,16 +571,15 @@ class DisplaySequence(object):
                 jack.start()
                 print("sync_thread started")
 
+        """
         if self.is_camera:
             config = PF_Intrinsic_Config()
             with PhotonfocusCamera(config) as camera:
                 camera.start()
                 print("Camera thread started.")
                 camera.trigger.set()
+        """
 
-
-        #declaring variable to check for new block start
-        # prev_dir = -1.0
 
         # print(self.seq_log['stimulation']['dire_list']) Nem sorrendben írja ki
 
