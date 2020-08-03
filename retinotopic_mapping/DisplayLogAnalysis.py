@@ -131,6 +131,21 @@ class DisplayLogAnalyzer(object):
 
         return stim_dict
 
+    def stim_block_extractor(self):
+        if self.stim_type == 'DriftingGratingCircle':
+            frame_directions = []
+            for i in self.log_dict['presentation']['displayed_frames']:
+                frame_directions.append(i[4])
+
+            num_of_cut_frames = 0
+            for i in range(self.iteration):
+                first_appearance_ind_list, last_frame_of_iteration = extract_dir_order_of_iteration(dir_list, all_dirs,
+                                                                                                    num_iterations)
+                frame_directions = frame_directions[last_frame_of_iteration:]
+
+                first_appearance_ind_list = list(np.asarray(first_appearance_ind_list) + num_of_cut_frames)
+                num_of_cut_frames += last_frame_of_iteration
+
     def analyze_photodiode_onsets_sequential(self, stim_dict, pd_thr=-0.5):
         """
         Analyze photodiode onsets in a sequential way

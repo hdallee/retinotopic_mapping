@@ -8,4 +8,5 @@ full_path = folder_path + file_path
 analyser = dla.DisplayLogAnalyzer(full_path)
 print("Init ok")
 log_dict = analyser.get_stim_dict()
-print(log_dict['000_DriftingGratingCircleRetinotopicMapping']['timestamps'][1].T)
+print("done")
+analyser.stim_block_extractor()
