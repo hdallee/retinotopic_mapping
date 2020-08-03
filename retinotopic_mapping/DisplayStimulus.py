@@ -548,7 +548,7 @@ class DisplaySequence(object):
         """
         frame_ts_start = []
         frame_ts_end = []
-        start_time = time.perf_counter()
+        start_time = time.time()
 
         if self.is_by_index:
             index_to_display = self.seq_log['stimulation']['index_to_display']
@@ -615,7 +615,7 @@ class DisplaySequence(object):
 
 
             # save frame start timestamp
-            frame_ts_start.append(time.perf_counter() - start_time)
+            frame_ts_start.append(time.time())
             '''
             if self.seq_log['stimulation']['frames_unique'][index_to_display[i]][4] != prev_dir:
                 if self.seq_log['stimulation']['frames_unique'][index_to_display[i]][4] == None:
@@ -642,7 +642,7 @@ class DisplaySequence(object):
                 self.displayed_frames.append(self.seq_log['stimulation']['frames'][frame_index])
 
             # save frame end timestamp
-            frame_ts_end.append(time.perf_counter() - start_time)
+            frame_ts_end.append(time.time())
             '''
             #save current direction
             prev_dir = self.seq_log['stimulation']['frames_unique'][index_to_display[i]][4]
@@ -655,7 +655,7 @@ class DisplaySequence(object):
             self._update_display_status()
             i += 1
 
-        stop_time = time.perf_counter()
+        stop_time = time.time()
         window.close()
 
         if self.is_sync_pulse:
