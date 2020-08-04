@@ -37,13 +37,17 @@ def extract_dir_order_of_iteration(frame_directions, shown_directions):
     """
 
     first_appearance_ind_list = []
+    last_appearance_ind_list = []
     for j in shown_directions:
         index = first_index_finder(frame_directions, j)
         first_appearance_ind_list.append(index)
+        index = last_index_finder(frame_directions, j)
+        last_appearance_ind_list.append(index)
     # sorted_indices holds the indices corresponding to the directions in all_dirs sorted by their first appearance
     sorted_indices = heapq.nsmallest(8, range(len(first_appearance_ind_list)), key=first_appearance_ind_list.__getitem__)
 
     print(first_appearance_ind_list)
+    print(last_appearance_ind_list)
     # print(sorted_indices)
     dirs_inorder = []
     for k in sorted_indices:
@@ -52,6 +56,9 @@ def extract_dir_order_of_iteration(frame_directions, shown_directions):
 
     # The last direction shown in the iteration is: all_dirs[sorted_indices[-1]]
     # We search for the last frame where a direction was shown in the iteration
-    last_frame_of_first_iteration = last_index_finder(frame_directions, shown_directions[sorted_indices[-1]]) + 1
-    # print(count_occurence(dir_list, all_dirs[sorted_indices[-1]]))
-    return first_appearance_ind_list, last_frame_of_first_iteration
+    last_frame_of_iteration = last_index_finder(frame_directions, shown_directions[sorted_indices[-1]]) + 1
+    # print(count_occurrence(dir_list, all_dirs[sorted_indices[-1]]))
+    direction_frame_ind_dict = {}
+    for x in range(len(shown_directions)):
+        direction_frame_ind_dict[shown_directions[x]] = (first_appearance_ind_list[x], last_appearance_ind_list[x])
+    return last_frame_of_iteration, direction_frame_ind_dict

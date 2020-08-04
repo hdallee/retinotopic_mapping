@@ -4,9 +4,11 @@ this module provides analysis tools to extract information about visual stimuli
 saved in the log pkl files.
 '''
 
+import warnings
 import numpy as np
-import tools.FileTools as ft
-import tools.GenericTools as gt
+import retinotopic_mapping.tools.FileTools as ft
+import retinotopic_mapping.tools.GenericTools as gt
+from retinotopic_mapping.tools.IO.LogFileExtractorTools import extract_dir_order_of_iteration
 
 class DisplayLogAnalyzer(object):
     """
@@ -20,9 +22,13 @@ class DisplayLogAnalyzer(object):
         self.log_dict = ft.loadFile(log_path)
 
         if not self.log_dict['presentation']['is_by_index']:
-            raise NotImplementedError('The visual stimuli display should be indexed.')
+            warnings.warn('The visual stimuli display should be indexed.')
+        else:
+            self.check_integrity()
 
-        self.check_integrity()
+        self.stim_type = self.log_dict['stimulation']['stim_name']
+        if not self.stim_type == 'CombinedStimuli':
+            self.iteration = self.log_dict['stimulation']['iteration']
 
     def check_integrity(self):
 
@@ -115,7 +121,7 @@ class DisplayLogAnalyzer(object):
         else:
             stim_name = self.log_dict['stimulation']['stim_name']
             if stim_name in ['UniformContrast', 'FlashingCircle', 'SparseNoise', 'LocallySparseNoise',
-                             'DriftingGratingCirlce', 'StaticGratingCircle', 'StaticImages', 'StimulusSeparator',
+                             'DriftingGratingCircle', 'StaticGratingCircle', 'StaticImages', 'StimulusSeparator',
                              'SinusoidalLuminance']:
                 curr_stim_name = '{:03d}_{}RetinotopicMapping'.format(0, stim_name)
                 curr_dict = self.log_dict['stimulation']
@@ -137,14 +143,68 @@ class DisplayLogAnalyzer(object):
             for i in self.log_dict['presentation']['displayed_frames']:
                 frame_directions.append(i[4])
 
+            self.direction_timestamps = {}
+            for direction in self.log_dict['stimulation']['dire_list']:
+                self.direction_timestamps[direction] = []
+
             num_of_cut_frames = 0
             for i in range(self.iteration):
-                first_appearance_ind_list, last_frame_of_iteration = extract_dir_order_of_iteration(dir_list, all_dirs,
-                                                                                                    num_iterations)
+                last_frame_of_iteration, direction_frame_ind_dict \
+                    = extract_dir_order_of_iteration(frame_directions, self.log_dict['stimulation']['dire_list'])
                 frame_directions = frame_directions[last_frame_of_iteration:]
 
-                first_appearance_ind_list = list(np.asarray(first_appearance_ind_list) + num_of_cut_frames)
+                for direction in self.log_dict['stimulation']['dire_list']:
+                    self.direction_timestamps[direction].append((
+                        self.log_dict['presentation']['frame_ts_start'][direction_frame_ind_dict[direction][0] + num_of_cut_frames],
+                        self.log_dict['presentation']['frame_ts_end'][direction_frame_ind_dict[direction][1] + num_of_cut_frames]))
+
                 num_of_cut_frames += last_frame_of_iteration
+
+        elif self.stim_type == 'KSstim':
+            self.direction = self.log_dict['stimulation']['direction']
+            self.iteration_timestamps = []
+            # iteration_first_index = -1
+            # iteration_last_index = -1
+            for i in range(len(self.log_dict['presentation']['displayed_frames'])):
+                if self.log_dict['presentation']['displayed_frames'][i][0] > \
+                        self.log_dict['presentation']['displayed_frames'][i - 1][0]:
+                    iteration_first_index = i
+                elif self.log_dict['presentation']['displayed_frames'][i][0] < \
+                        self.log_dict['presentation']['displayed_frames'][i - 1][0]:
+                    iteration_last_index = i-1
+                    self.iteration_timestamps.append((self.log_dict['presentation']['frame_ts_start'][iteration_first_index], self.log_dict['presentation']['frame_ts_start'][iteration_last_index]))
+
+            if not len(self.iteration_timestamps) == self.iteration:
+                ValueError("Couldn't extract timestamps of all iterations.")
+
+        elif self.stim_type == 'KSstimAllDir':
+            self.direction = self.log_dict['stimulation']['direction']
+            self.direction_timestamps = {}
+            for direction in self.direction:
+                self.direction_timestamps[direction] = []
+            for i in range(len(self.log_dict['presentation']['displayed_frames'])):
+                if self.log_dict['presentation']['displayed_frames'][i][0] > \
+                        self.log_dict['presentation']['displayed_frames'][i - 1][0]:
+                    iteration_first_index = i
+                elif self.log_dict['presentation']['displayed_frames'][i][0] < \
+                        self.log_dict['presentation']['displayed_frames'][i - 1][0]:
+                    self.direction_timestamps[self.log_dict['presentation']['displayed_frames'][i-1][4]].append(
+                        (self.log_dict['presentation']['frame_ts_start'][iteration_first_index],
+                         self.log_dict['presentation']['frame_ts_end'][i-1]))
+
+        elif self.stim_type == 'CombinedStimuli':
+            self.stimuli_sequence = self.log_dict['stimulation']['stimuli_sequence']
+            is_UniformContrast = True
+            for name in self.stimuli_sequence:
+                if 'UniformContrast' not in name:
+                    is_UniformContrast = False
+            if is_UniformContrast:
+                self.iteration_timestamps = []
+                # Continue here!
+            else:
+                print('Combined stimuli that are not Uniform Contrast are not implemented yet.')
+
+
 
     def analyze_photodiode_onsets_sequential(self, stim_dict, pd_thr=-0.5):
         """
