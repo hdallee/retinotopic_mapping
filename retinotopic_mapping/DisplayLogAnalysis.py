@@ -5,6 +5,8 @@ saved in the log pkl files.
 '''
 
 import warnings
+import os
+from pathlib import Path
 import numpy as np
 import retinotopic_mapping.tools.FileTools as ft
 import retinotopic_mapping.tools.GenericTools as gt
@@ -19,6 +21,7 @@ class DisplayLogAnalyzer(object):
 
     def __init__(self, log_path):
 
+        self.log_path = log_path
         self.log_dict = ft.loadFile(log_path)
 
         if not self.log_dict['presentation']['is_by_index']:
@@ -214,6 +217,44 @@ class DisplayLogAnalyzer(object):
                         block_started = False  # we found the end of the stim block
             else:
                 print('Combined stimuli that are not Uniform Contrast are not implemented yet.')
+
+    def save_to_recording(self, recording_full_path=None):
+        """
+        Searches for the corresponding .hdf recording file and saves the stimulus log and the extracted variables to it.
+        Intended to be run after using stim_block_extractor().
+        :return:
+        """
+        from visexpA.engine.datahandlers.hdf5io import Hdf5io
+        if recording_full_path is None:  # Tries to find corresponding recording based on timestamp in filename.
+            experiment_folder = str(self.log_path)[:str(self.log_path).find('stimulus') - 1]
+            self.recording_path = Path(experiment_folder) / 'data'
+            log_ts_str = str(self.log_path.stem)[6:12]
+            file_counter = 0
+            for filename in os.listdir(self.recording_path):
+                if abs(ft.time_diff_in_seconds(log_ts_str, filename[9:15])) < 20:
+                    recording_full_path = self.recording_path / filename
+                    file_counter += 1
+            if file_counter > 1:
+                raise ValueError('Cannot determine corresponding recording file, please specify it with the filename!')
+
+        with Hdf5io(filename=str(recording_full_path), filelocking=False) as recording:
+            print(recording.h5f)
+            if self.stim_type == 'KSstimAllDir':
+                try:
+                    print('Saving')
+                    #  save direction_timestamps
+                    recording.direction_timestamps = self.direction_timestamps
+                    recording.stim_parameters = {}
+                    recording.stim_parameters['iteration'] = self.iteration
+                    recording.stim_parameters['directions'] = self.direction
+                    recording.stim_parameters['stim_type'] = self.stim_type
+
+                    recording.save(['direction_timestamps', 'stim_parameters'])
+                except IOError:
+                    print('Saving was unsuccesful.')
+            print(recording.h5f)
+            print(recording.findvar('directions'))
+
 
 
 

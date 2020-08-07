@@ -3,6 +3,7 @@ __author__ = 'junz'
 import numpy as np
 import pickle
 import os
+import time
 import shutil
 from retinotopic_mapping.tools import ImageAnalysis as ia
 
@@ -529,6 +530,15 @@ def int2str(num, length=None):
         raise ValueError('Length of the number is longer then defined display length!')
     elif length > len(rawstr):
         return '0' * (length - len(rawstr)) + rawstr
+
+
+def time_diff_in_seconds(a, b):
+    a_time = time.strptime(a, '%H%M%S')
+    b_time = time.strptime(b, '%H%M%S')
+    a_seconds = a_time.tm_hour * 3600 + a_time.tm_min * 60 + a_time.tm_sec
+    b_seconds = b_time.tm_hour * 3600 + b_time.tm_min * 60 + b_time.tm_sec
+    return a_seconds-b_seconds
+
 
 
 # ==============================  obsolete  =========================================
