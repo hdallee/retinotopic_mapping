@@ -3,6 +3,7 @@ import heapq
 import numpy as np
 import os
 
+
 def first_index_finder(list, dir):
     """
     Finds and returns the index of the first frame in list where the stimulus direction was dir.
@@ -14,6 +15,7 @@ def first_index_finder(list, dir):
         if x[1] == dir:
             return x[0]
 
+
 def last_index_finder(list, dir):
     """
     Finds and returns the index of the first frame where that frame is followed by gap.
@@ -24,6 +26,7 @@ def last_index_finder(list, dir):
     for x in range(len(list)):
         if list[x] == dir and list[x+1]==None:
             return x
+
 
 def extract_dir_order_of_iteration(dir_list, all_dirs, num_iterations):
 

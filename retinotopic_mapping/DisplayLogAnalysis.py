@@ -200,7 +200,18 @@ class DisplayLogAnalyzer(object):
                     is_UniformContrast = False
             if is_UniformContrast:
                 self.iteration_timestamps = []
-                # Continue here!
+                block_started = False
+                for i in range(len(self.log_dict['presentation']['displayed_frames'])):
+                    if self.log_dict['presentation']['displayed_frames'][i][1] > \
+                            self.log_dict['presentation']['displayed_frames'][i - 1][1]:
+                        iteration_first_index = i
+                        block_started = True
+                    elif (block_started and self.log_dict['presentation']['displayed_frames'][i][1] < \
+                            self.log_dict['presentation']['displayed_frames'][i - 1][1]) or \
+                            (block_started and i == len(self.log_dict['presentation']['displayed_frames'])-1):
+                        iteration_last_index = i - 1
+                        self.iteration_timestamps.append((self.log_dict['presentation']['frame_ts_start'][iteration_first_index], self.log_dict['presentation']['frame_ts_start'][iteration_last_index]))
+                        block_started = False  # we found the end of the stim block
             else:
                 print('Combined stimuli that are not Uniform Contrast are not implemented yet.')
 

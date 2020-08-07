@@ -8,7 +8,7 @@ mon = Monitor(resolution=(768, 1360), dis=15., mon_width_cm=52., mon_height_cm=3
 ind = Indicator(mon)
 
 ks = stim.KSstimAllDir(mon, ind)
-ds = DisplaySequence(log_dir="C:/data", is_by_index=False, is_sync_pulse_LJ=False)
+ds = DisplaySequence(log_dir="data", is_by_index=False, is_sync_pulse_LJ=False)
 
 ds.set_stim(ks)
 ds.trigger_display()
