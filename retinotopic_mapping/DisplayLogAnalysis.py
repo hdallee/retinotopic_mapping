@@ -248,12 +248,16 @@ class DisplayLogAnalyzer(object):
                     recording.stim_parameters['iteration'] = self.iteration
                     recording.stim_parameters['directions'] = self.direction
                     recording.stim_parameters['stim_type'] = self.stim_type
+                    recording.stim_parameters['num_frame_tot'] = self.num_frame_tot
 
                     recording.save(['direction_timestamps', 'stim_parameters'])
                 except IOError:
                     print('Saving was unsuccesful.')
-            print(recording.h5f)
-            print(recording.findvar('directions'))
+
+            print(recording.findvar('B2U', path='/direction_timestamps'))
+            print(recording.findvar('directions', path='/stim_parameters'))
+            print(recording.findvar('stim_type', path='/stim_parameters'))
+            print(recording.findvar('timestamps'))
 
 
 
