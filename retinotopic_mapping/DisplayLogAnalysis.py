@@ -141,6 +141,11 @@ class DisplayLogAnalyzer(object):
         return stim_dict
 
     def stim_block_extractor(self):
+        """
+        This method extracts stimulus timestamp information from the log,
+         and stores it in the object's iteration_timestamps/direction_timestamps attribute.
+        :return:
+        """
         if self.stim_type == 'DriftingGratingCircle':
             frame_directions = []
             for i in self.log_dict['presentation']['displayed_frames']:
