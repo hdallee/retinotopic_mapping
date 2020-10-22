@@ -32,6 +32,8 @@ class DisplayLogAnalyzer(object):
         self.stim_type = self.log_dict['stimulation']['stim_name']
         if not self.stim_type == 'CombinedStimuli':
             self.iteration = self.log_dict['stimulation']['iteration']
+        else:
+            self.iteration = len(self.log_dict['stimulation']['stimuli_sequence'])
 
     def check_integrity(self):
 
@@ -214,11 +216,13 @@ class DisplayLogAnalyzer(object):
                             self.log_dict['presentation']['displayed_frames'][i - 1][1]:
                         iteration_first_index = i
                         block_started = True
-                    elif (block_started and self.log_dict['presentation']['displayed_frames'][i][1] < \
-                            self.log_dict['presentation']['displayed_frames'][i - 1][1]) or \
+                    elif (block_started and self.log_dict['presentation']['displayed_frames'][i][1] <
+                          self.log_dict['presentation']['displayed_frames'][i - 1][1]) or \
                             (block_started and i == len(self.log_dict['presentation']['displayed_frames'])-1):
                         iteration_last_index = i - 1
-                        self.iteration_timestamps.append((self.log_dict['presentation']['frame_ts_start'][iteration_first_index], self.log_dict['presentation']['frame_ts_start'][iteration_last_index]))
+                        self.iteration_timestamps.append((self.log_dict['presentation']['frame_ts_start']
+                                                          [iteration_first_index], self.log_dict['presentation']
+                                                          ['frame_ts_start'][iteration_last_index]))
                         block_started = False  # we found the end of the stim block
             else:
                 print('Combined stimuli that are not Uniform Contrast are not implemented yet.')
@@ -234,12 +238,12 @@ class DisplayLogAnalyzer(object):
             experiment_folder = str(self.log_path)[:str(self.log_path).find('stimulus') - 1]
             self.recording_path = Path(experiment_folder) / 'data'
             log_ts_str = str(self.log_path.stem)[6:12]
-            file_counter = 0
+            found_file_counter = 0
             for filename in os.listdir(self.recording_path):
-                if abs(ft.time_diff_in_seconds(log_ts_str, filename[9:15])) < 20:
+                if filename[-4:] == 'hdf5' and abs(ft.time_diff_in_seconds(log_ts_str, filename[9:15])) < 20:
                     recording_full_path = self.recording_path / filename
-                    file_counter += 1
-            if file_counter > 1:
+                    found_file_counter += 1
+            if found_file_counter != 1:
                 raise ValueError('Cannot determine corresponding recording file, please specify it with the filename!')
 
         with Hdf5io(filename=str(recording_full_path), filelocking=False) as recording:
@@ -257,15 +261,50 @@ class DisplayLogAnalyzer(object):
 
                     recording.save(['direction_timestamps', 'stim_parameters'])
                 except IOError:
-                    print('Saving was unsuccesful.')
+                    print('Saving was unsuccessful.')
 
-            print(recording.findvar('B2U', path='/direction_timestamps'))
-            print(recording.findvar('directions', path='/stim_parameters'))
-            print(recording.findvar('stim_type', path='/stim_parameters'))
-            print(recording.findvar('timestamps'))
+                print(recording.findvar('B2U', path='/direction_timestamps'))
+                print(recording.findvar('directions', path='/stim_parameters'))
+                print(recording.findvar('stim_type', path='/stim_parameters'))
+                print(recording.findvar('timestamps'))
 
+            elif self.stim_type == 'KSstim':
+                try:
+                    print('Saving')
+                    recording.iteration_timestamps = self.iteration_timestamps
+                    recording.stim_parameters = {}
+                    recording.stim_parameters['iteration'] = self.iteration
+                    recording.stim_parameters['directions'] = self.direction
+                    recording.stim_parameters['stim_type'] = self.stim_type
+                    recording.stim_parameters['num_frame_tot'] = self.num_frame_tot
 
+                    recording.save(['iteration_timestamps', 'stim_parameters'])
 
+                except IOError:
+                    print('Saving was unsuccessful.')
+
+            elif self.stim_type == 'CombinedStimuli':
+                self.stimuli_sequence = self.log_dict['stimulation']['stimuli_sequence']
+                is_UniformContrast = True
+                for name in self.stimuli_sequence:
+                    if 'UniformContrast' not in name:
+                        is_UniformContrast = False
+                if is_UniformContrast:
+                    try:
+                        print('Saving')
+                        recording.iteration_timestamps = self.iteration_timestamps
+                        recording.stim_parameters = {}
+                        recording.stim_parameters['iteration'] = self.iteration
+                        recording.stim_parameters['stim_type'] = self.stim_type
+                        recording.stim_parameters['num_frame_tot'] = self.num_frame_tot
+
+                        recording.save(['iteration_timestamps', 'stim_parameters'])
+
+                    except IOError:
+                        print('Saving was unsuccessful.')
+
+            else:
+                print("Saving this stimulus type is not implemented yet.")
 
     def analyze_photodiode_onsets_sequential(self, stim_dict, pd_thr=-0.5):
         """
