@@ -1,11 +1,10 @@
+import retinotopic_mapping.StimulusRoutines as stim
+from retinotopic_mapping.MonitorSetup import Monitor, Indicator
+from retinotopic_mapping.DisplayStimulus import DisplaySequence
+import multiprocessing
+multiprocessing.set_start_method("spawn")
+
 if __name__ == '__main__':
-    import retinotopic_mapping.StimulusRoutines as stim
-    from retinotopic_mapping.MonitorSetup import Monitor, Indicator
-    from retinotopic_mapping.DisplayStimulus import DisplaySequence
-    import multiprocessing
-    multiprocessing.set_start_method("spawn")
-
-
     mon = Monitor(resolution=(1024, 1280), dis=20., mon_width_cm=33.28, mon_height_cm=26.624, refresh_rate=60.0)
 
     # creating a monitor object to display the indicator on (since we don' use it)
