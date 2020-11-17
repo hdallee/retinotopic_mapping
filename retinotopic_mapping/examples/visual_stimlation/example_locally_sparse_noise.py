@@ -12,6 +12,7 @@ running all you need to do is press either one of the 'Esc' or 'q' buttons.
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 import retinotopic_mapping.StimulusRoutines as stim
 from retinotopic_mapping.MonitorSetup import Monitor, Indicator
 from retinotopic_mapping.DisplayStimulus import DisplaySequence
@@ -30,7 +31,7 @@ here is just making sure that we can display stimulus on a monitor and learning
 how to work with the different stimulus routines.
 """
 
-
+matplotlib.use('TkAgg')
 # ======================== monitor parameters ==================================
 mon_resolution = (1200,1920) #enter your monitors resolution (height, width)
 mon_width_cm = 52 #enter your monitors width in cm

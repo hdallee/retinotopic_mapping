@@ -1298,7 +1298,7 @@ class SparseNoise(Stim):
 
     def __init__(self, monitor, indicator, background=0., coordinate='degree',
                  grid_space=(10., 10.), probe_size=(10., 10.), probe_orientation=0.,
-                 probe_frame_num=6, subregion=None, sign='ON-OFF', iteration=1,
+                 probe_frame_num=6, subregion=None, sign='ON-OFF', midgap_dur=0, iteration=1,
                  pregap_dur=2., postgap_dur=3., is_include_edge=True):
         """
         Initialize sparse noise object, inherits Parameters from Stim object
@@ -1315,6 +1315,7 @@ class SparseNoise(Stim):
         self.grid_space = grid_space
         self.probe_size = probe_size
         self.probe_orientation = probe_orientation
+        self.midgap_duration = float(midgap_dur)
 
         if probe_frame_num >= 2.:
             self.probe_frame_num = int(probe_frame_num)
@@ -1346,6 +1347,10 @@ class SparseNoise(Stim):
             raise ValueError('iteration should be no less than 1.')
 
         self.clear()
+
+    @property
+    def midgap_frame_num(self):
+        return int(self.midgap_duration * self.monitor.refresh_rate)
 
     def _get_grid_locations(self, is_plot=False):
         """
@@ -1592,6 +1597,7 @@ class SparseNoise(Stim):
                 probe_inds = self._get_probe_index_for_one_iter_on_off(frames_unique)
 
                 for probe_ind in probe_inds:
+                    index_to_display += [0] * self.midgap_frame_num
                     index_to_display += [probe_ind * 2 + 1] * probe_on_frame_num
                     index_to_display += [probe_ind * 2 + 2] * probe_off_frame_num
 
@@ -1623,13 +1629,13 @@ class SparseNoise(Stim):
                              format(self.coordinate))
 
         indicator_width_min = (self.indicator.center_width_pixel
-                               - self.indicator.width_pixel / 2)
+                               - self.indicator.width_pixel // 2)
         indicator_width_max = (self.indicator.center_width_pixel
-                               + self.indicator.width_pixel / 2)
+                               + self.indicator.width_pixel // 2)
         indicator_height_min = (self.indicator.center_height_pixel
-                                - self.indicator.height_pixel / 2)
+                                - self.indicator.height_pixel // 2)
         indicator_height_max = (self.indicator.center_height_pixel
-                                + self.indicator.height_pixel / 2)
+                                + self.indicator.height_pixel // 2)
 
         full_seq = self.background * \
                    np.ones((num_unique_frames, num_pixels_width, num_pixels_height), dtype=np.float32)
