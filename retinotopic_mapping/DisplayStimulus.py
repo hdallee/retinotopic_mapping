@@ -567,9 +567,9 @@ class DisplaySequence(object):
             _ = syncPulseTask.write(np.array([0]).astype(np.uint8))
 
         if self.is_sync_pulse_LJ:
-            with U3Wrap() as jack:
-                jack.start()
-                print("sync_thread started")
+            jack = U3Wrap()
+            jack.start()
+            print("Sync thread started")
 
         """
         if self.is_camera:
@@ -659,6 +659,12 @@ class DisplaySequence(object):
 
         if self.is_sync_pulse:
             syncPulseTask.StopTask()
+
+        if self.is_sync_pulse_LJ:
+            jack.terminate = 1
+            jack.trigger.set()
+            jack.join()
+            print("Successfully joined sync thread.")
 
         self.frame_ts_start = np.array(frame_ts_start)
         self.frame_ts_end = np.array(frame_ts_end)
