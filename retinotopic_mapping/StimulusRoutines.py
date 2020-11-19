@@ -1688,13 +1688,13 @@ class SparseNoise(Stim):
                              format(self.coordinate))
 
         indicator_width_min = (self.indicator.center_width_pixel
-                               - self.indicator.width_pixel / 2)
+                               - self.indicator.width_pixel // 2)
         indicator_width_max = (self.indicator.center_width_pixel
-                               + self.indicator.width_pixel / 2)
+                               + self.indicator.width_pixel // 2)
         indicator_height_min = (self.indicator.center_height_pixel
-                                - self.indicator.height_pixel / 2)
+                                - self.indicator.height_pixel // 2)
         indicator_height_max = (self.indicator.center_height_pixel
-                                + self.indicator.height_pixel / 2)
+                                + self.indicator.height_pixel // 2)
 
         full_seq = np.ones((len(self.frames),
                             self.monitor.deg_coord_x.shape[0],
@@ -1740,7 +1740,7 @@ class SparseNoise(Stim):
             full_seq[i, indicator_height_min:indicator_height_max,
             indicator_width_min:indicator_width_max] = curr_frame[3]
 
-            if i in range(0, len(self.frames), len(self.frames) / 10):
+            if i in range(0, len(self.frames), len(self.frames) // 10):
                 print(('Generating numpy sequence: ' +
                        str(int(100 * (i + 1) / len(self.frames))) + '%'))
 
@@ -3045,7 +3045,7 @@ class StaticGratingCircle(Stim):
 
             if len(frames_unique) % 2 != 1:
                 raise ValueError('StaticGratingCircle: the number of unique frames should odd.')
-            condition_num = (len(frames_unique) - 1) / 2
+            condition_num = (len(frames_unique) - 1) // 2
 
             index_to_display = [0] * self.pregap_frame_num
 
@@ -3465,7 +3465,7 @@ class StaticImages(Stim):
 
             if len(frames_unique) % 2 != 1:
                 raise ValueError('StaticGratingCircle: the number of unique frames should odd.')
-            img_num = (len(frames_unique) - 1) / 2
+            img_num = (len(frames_unique) - 1) // 2
 
             index_to_display = [0] * self.pregap_frame_num
 

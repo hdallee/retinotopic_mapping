@@ -247,7 +247,7 @@ class TestSimulation(unittest.TestCase):
         # print max(index_to_display)
         # print len(frames_unique)
         assert (max(index_to_display) == len(frames_unique) -1)
-        probe_num = (len(index_to_display) - 18) / 6
+        probe_num = (len(index_to_display) - 18) // 6
         for probe_ind in range(probe_num):
             assert (len(set(index_to_display[6 + probe_ind * 6: 9 + probe_ind * 6])) == 1)
             assert (len(set(index_to_display[9 + probe_ind * 6: 12 + probe_ind * 6])) == 1)
@@ -283,7 +283,7 @@ class TestSimulation(unittest.TestCase):
 
         # frame_num_iter = (len(index_to_display) - 18 - 30) / 2
         assert ((len(index_to_display) - 48) % (8 * 2) == 0)
-        probe_num = (len(index_to_display) - 48) / (8 * 2)
+        probe_num = (len(index_to_display) - 48) // (8 * 2)
         for probe_ind in range(probe_num):
             assert (len(set(index_to_display[30 + probe_ind * 8: 34 + probe_ind * 8])) == 1)
             assert (len(set(index_to_display[34 + probe_ind * 8: 38 + probe_ind * 8])) == 1)
