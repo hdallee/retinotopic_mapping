@@ -5,6 +5,7 @@ import os
 
 def save_logs_in_folder_to_recording(folder_path=None):
     for filename in os.listdir(folder_path):
+        print(filename)
         if filename[-3:] == 'pkl':
             analyser = dla.DisplayLogAnalyzer(folder_path / filename)
             print("Init ok")
