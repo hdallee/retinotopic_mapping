@@ -15,7 +15,11 @@ def save_logs_in_folder_to_recording(folder_path=None):
 
 
 if __name__ == '__main__':
-    folder_path = Path("/media/experiment/5CECA892ECA867CA/Data/Experiment/10.20/stimulus/data/visual_display_log/")
+    folder_path = Path("D:/Widefield experiment data/12.18/N.o. 35/good_cp/stimulus/data/visual_display_log/")
     save_logs_in_folder_to_recording(folder_path)
-    # file_path = "201020150925-CombinedStimuli-MTest-Name-000-notTriggered-complete.pkl"
-    # full_path = folder_path / file_path
+    exit()
+    file_path = "201028113056-CombinedStimuli-MTest-Name-000-notTriggered-complete.pkl"
+    full_path = folder_path / file_path
+    an = dla.DisplayLogAnalyzer(full_path)
+    print("OKOK")
+
