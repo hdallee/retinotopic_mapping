@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import time
 from retinotopic_mapping.tools import FileTools as ft
 from visexpA.engine.datahandlers.labjack import U3Wrap
-from visexpA.engine.datahandlers.photonfocus_camera import PhotonfocusCamera, PF_Fluorescent_Config, PF_Intrinsic_Config
+# from visexpA.engine.datahandlers.photonfocus_camera import PhotonfocusCamera, PF_Fluorescent_Config, PF_Intrinsic_Config
 # for testing without NI DAQ card
 nipresent = 0
 if nipresent:
@@ -570,15 +570,6 @@ class DisplaySequence(object):
             jack = U3Wrap()
             jack.start()
             print("Sync thread started")
-
-        """
-        if self.is_camera:
-            config = PF_Intrinsic_Config()
-            with PhotonfocusCamera(config) as camera:
-                camera.start()
-                print("Camera thread started.")
-                camera.trigger.set()
-        """
 
 
         # print(self.seq_log['stimulation']['dire_list']) Nem sorrendben írja ki
