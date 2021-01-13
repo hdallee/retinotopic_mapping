@@ -13,7 +13,7 @@ if __name__ == '__main__':
     repeated_stim = stim.CombinedStimuli(mon, ind, background=-1, pregap_dur=2, postgap_dur=0)
     repeated_stim.set_stimuli([uc]*10) # set the number of iterations here
 
-    ds = DisplaySequence(log_dir="C:/data", is_by_index=True, display_screen=1, is_sync_pulse_LJ=False)
+    ds = DisplaySequence(log_dir="/data", is_by_index=True, display_screen=1, is_sync_pulse_LJ=False)
 
     ds.set_stim(repeated_stim)
     ds.trigger_display(fullscr=False)

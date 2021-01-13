@@ -15,8 +15,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 from retinotopic_mapping.tools import FileTools as ft
-from visexpA.engine.datahandlers.labjack import U3Wrap
-# from visexpA.engine.datahandlers.photonfocus_camera import PhotonfocusCamera, PF_Fluorescent_Config, PF_Intrinsic_Config
+from visexpa.engine.datahandlers.labjack import U3Wrap
+# from visexpa.engine.datahandlers.photonfocus_camera import PhotonfocusCamera, PF_Fluorescent_Config, PF_Intrinsic_Config
 # for testing without NI DAQ card
 nipresent = 0
 if nipresent:

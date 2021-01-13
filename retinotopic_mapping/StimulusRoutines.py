@@ -246,7 +246,11 @@ def get_grating(alt_map, azi_map, dire=0., spatial_freq=0.1,
                 np.cos(axis_arc) * (map_alt_h - center[0]))
 
     grating = np.sin(distance * 2 * np.pi * spatial_freq - phase)
-
+    sqr = 1
+    if sqr:
+        from visexpa.engine.dataprocessors.generic import normalize
+        grating = np.clip(grating, 0, 1e-5)
+        grating = normalize(grating)*2-1
     grating = grating * contrast  # adjust contrast
 
     grating = (grating + 1.) / 2.  # change the scale of grating to be [0., 1.]
