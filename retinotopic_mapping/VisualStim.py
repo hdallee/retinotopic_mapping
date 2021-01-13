@@ -3580,9 +3580,9 @@ if __name__ == "__main__":
     # ==============================================================================================================================
 
     # ==============================================================================================================================
-    from visexpA.engine.datahandlers.ximea_camera import XimeaCamera
-    from visexpA.engine.misc.introspect import nameless_dummy_object_with_methods
-    from visexpA.engine.datahandlers.hdf5io import Hdf5io
+    from visexpa.engine.datahandlers.ximea_camera import XimeaCamera
+    from visexpa.engine.misc.introspect import nameless_dummy_object_with_methods
+    from visexpa.engine.datahandlers.hdf5io import Hdf5io
     from contextlib import closing
 
     camcfg = nameless_dummy_object_with_methods()
@@ -3656,7 +3656,7 @@ if __name__ == "__main__":
     # pdb.set_trace()
     from matplotlib import pyplot as MPL
     from matplotlib import cm
-    from visexpA.engine.dataprocessors.image import WideFieldData
+    from visexpa.engine.dataprocessors.image import WideFieldData
 
     with closing(WideFieldData(output_file.filename, filelocking=False)) as datahandler:
         camera_mean = datahandler.camera_frames['raw'].mean(axis=0)
@@ -3666,7 +3666,7 @@ if __name__ == "__main__":
 
     imsave(output_file.filename + '.png', camera_mean, 'png')
     sys.exit(0)
-    from visexpA.engine.datadisplay.comparer import yes_no_cancel_question
+    from visexpa.engine.datadisplay.comparer import yes_no_cancel_question
 
     ans = yes_no_cancel_question(
         'Delete saved files (tap any key to keep them, tap "y" to delete them if this was a test recording',

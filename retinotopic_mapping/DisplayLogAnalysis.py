@@ -233,7 +233,7 @@ class DisplayLogAnalyzer(object):
         Intended to be run after using stim_block_extractor().
         :return:
         """
-        from visexpA.engine.datahandlers.hdf5io import Hdf5io
+        from visexpa.engine.datahandlers.hdf5io import Hdf5io
         if recording_full_path is None:  # Tries to find corresponding recording based on timestamp in filename.
             experiment_folder = str(self.log_path)[:str(self.log_path).find('stimulus') - 1]
             self.recording_path = Path(experiment_folder) / 'data'

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from visexpA.engine.datahandlers.hdf5io import Hdf5io
+from visexpa.engine.datahandlers.hdf5io import Hdf5io
 
 
 

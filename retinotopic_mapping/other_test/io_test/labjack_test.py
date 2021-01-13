@@ -1,5 +1,5 @@
-from visexpA.engine.datahandlers.labjack import U3Wrap
-from visexpA.engine.datahandlers.labjack import test_read, test_write_pulses
+from visexpa.engine.datahandlers.labjack import U3Wrap
+from visexpa.engine.datahandlers.labjack import test_read, test_write_pulses
 import time
 
 with U3Wrap() as jack:

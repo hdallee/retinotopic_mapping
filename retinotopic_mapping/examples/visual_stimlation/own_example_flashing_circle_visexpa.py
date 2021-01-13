@@ -7,9 +7,9 @@ import sys
 import time
 import os
 import pickle
-from visexpA.engine.datahandlers.hdf5io import Hdf5io
-from visexpA.engine.misc.introspect import nameless_dummy_object_with_methods
-from visexpA.engine.datahandlers.ximea_camera import XimeaCamera
+from visexpa.engine.datahandlers.hdf5io import Hdf5io
+from visexpa.engine.misc.introspect import nameless_dummy_object_with_methods
+from visexpa.engine.datahandlers.ximea_camera import XimeaCamera
 
 basedir = '/home/abel/data'
 
@@ -93,7 +93,7 @@ print('Data acquisition done. Loading data and averaging frames...')
 # pdb.set_trace()
 # from matplotlib import pyplot as MPL
 from matplotlib import cm
-from visexpA.engine.dataprocessors.image import WideFieldData
+from visexpa.engine.dataprocessors.image import WideFieldData
 
 with WideFieldData(output_file.filename, filelocking=False) as datahandler:
     camera_mean = datahandler.camera_frames['raw'].mean(axis=0)
@@ -103,7 +103,7 @@ from scipy.misc import imsave
 
 imsave(output_file.filename + '.png', camera_mean, 'png')
 sys.exit(0)
-from visexpA.engine.datadisplay.comparer import yes_no_cancel_question
+from visexpa.engine.datadisplay.comparer import yes_no_cancel_question
 ans = yes_no_cancel_question(
     'Delete saved files (tap any key to keep them, tap "y" to delete them if this was a test recording',
     show_dialog=True)
