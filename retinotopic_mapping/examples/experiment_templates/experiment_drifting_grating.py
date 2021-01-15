@@ -11,7 +11,8 @@ if __name__ == "__main__":
 
     ks = stim.DriftingGratingCircle(mon, ind, radius_list=[50], dire_list=[0, 45, 90, 135, 180, 225, 270, 315],
                                     pregap_dur=3, postgap_dur=2, is_smooth_edge=False, block_dur=5, midgap_dur=5,
-                                    center=(0., 60.), sf_list=[0.05], tf_list=[0.8], con_list=[1], iteration=5, is_blank_block=False)
+                                    center=(0., 60.), sf_list=[0.05], tf_list=[0.8], con_list=[1], iteration=5,
+                                    is_blank_block=False, sqr=False)
     ds = DisplaySequence(log_dir="/data", is_by_index=True, display_screen=0, is_sync_pulse_LJ=False)
 
     ds.set_stim(ks)

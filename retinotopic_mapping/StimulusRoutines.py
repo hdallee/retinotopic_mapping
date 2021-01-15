@@ -203,7 +203,7 @@ def get_circle_mask(map_alt, map_azi, center, radius, is_smooth_edge=False,
 
 
 def get_grating(alt_map, azi_map, dire=0., spatial_freq=0.1,
-                center=(0., 60.), phase=0., contrast=1.):
+                center=(0., 60.), phase=0., contrast=1., sqr=False):
     """
     Generate a grating frame with defined spatial frequency, center location,
     phase and contrast
@@ -246,11 +246,12 @@ def get_grating(alt_map, azi_map, dire=0., spatial_freq=0.1,
                 np.cos(axis_arc) * (map_alt_h - center[0]))
 
     grating = np.sin(distance * 2 * np.pi * spatial_freq - phase)
-    sqr = 1
+
     if sqr:
         from visexpa.engine.dataprocessors.generic import normalize
         grating = np.clip(grating, 0, 1e-5)
         grating = normalize(grating)*2-1
+
     grating = grating * contrast  # adjust contrast
 
     grating = (grating + 1.) / 2.  # change the scale of grating to be [0., 1.]
@@ -2325,7 +2326,7 @@ class DriftingGratingCircle(Stim):
                  center=(0., 60.), sf_list=(0.08,), tf_list=(4.,), dire_list=(0.,),
                  con_list=(0.5,), radius_list=(10.,), block_dur=2., midgap_dur=0.5,
                  iteration=1, pregap_dur=2., postgap_dur=3., is_smooth_edge=False,
-                 smooth_width_ratio=0.2, smooth_func=blur_cos, is_blank_block=True, tex='sqr'):
+                 smooth_width_ratio=0.2, smooth_func=blur_cos, is_blank_block=True, sqr=False):
         """
         Initialize `DriftingGratingCircle` stimulus object, inherits Parameters
         from `Stim` class
@@ -2351,6 +2352,7 @@ class DriftingGratingCircle(Stim):
         self.is_smooth_edge = is_smooth_edge
         self.smooth_width_ratio = smooth_width_ratio
         self.smooth_func = smooth_func
+        self.sqr = sqr
 
         if int(block_dur * self.monitor.refresh_rate) >= 4:
             self.block_dur = float(block_dur)
@@ -2704,7 +2706,8 @@ class DriftingGratingCircle(Stim):
                                            spatial_freq=frame[2],
                                            center=self.center,
                                            phase=frame[7],
-                                           contrast=frame[5])
+                                           contrast=frame[5],
+                                           sqr=self.sqr)
 
                 curr_grating = curr_grating * 2. - 1.
 
@@ -2799,7 +2802,8 @@ class DriftingGratingCircle(Stim):
                                            spatial_freq=curr_frame[2],
                                            center=self.center,
                                            phase=curr_frame[7],
-                                           contrast=curr_frame[5])
+                                           contrast=curr_frame[5],
+                                           sqr=self.sqr)
                 # plt.imshow(curr_grating)
                 # plt.show()
 
@@ -2901,7 +2905,7 @@ class StaticGratingCircle(Stim):
                  radius_list=(10.,), phase_list=(0., 90., 180., 270.), display_dur=0.25,
                  midgap_dur=0., iteration=1, pregap_dur=2., postgap_dur=3.,
                  is_smooth_edge=False, smooth_width_ratio=0.2, smooth_func=blur_cos,
-                 is_blank_block=True):
+                 is_blank_block=True, sqr=False):
         """
         Initialize `StaticGratingCircle` stimulus object, inherits Parameters
         from `Stim` class
@@ -2928,6 +2932,7 @@ class StaticGratingCircle(Stim):
         self.is_smooth_edge = is_smooth_edge
         self.smooth_width_ratio = smooth_width_ratio
         self.smooth_func = smooth_func
+        self.sqr = sqr
 
         if display_dur > 0.:
             self.display_dur = float(display_dur)
@@ -3121,7 +3126,8 @@ class StaticGratingCircle(Stim):
                                            spatial_freq=frame[1],
                                            center=self.center,
                                            phase=frame[2],
-                                           contrast=frame[4])
+                                           contrast=frame[4],
+                                           sqr=self.sqr)
 
                 curr_grating = curr_grating * 2. - 1.
 
