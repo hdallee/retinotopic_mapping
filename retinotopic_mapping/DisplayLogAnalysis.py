@@ -8,6 +8,7 @@ import warnings
 import os
 from pathlib import Path
 import numpy as np
+import json
 import retinotopic_mapping.tools.FileTools as ft
 import retinotopic_mapping.tools.GenericTools as gt
 from retinotopic_mapping.tools.IO.LogFileExtractorTools import extract_dir_order_of_iteration
@@ -144,9 +145,8 @@ class DisplayLogAnalyzer(object):
 
     def stim_block_extractor(self):
         """
-        This method extracts stimulus timestamp information from the log,
-         and stores it in the object's iteration_timestamps/direction_timestamps attribute.
-        :return:
+        Extract stimulus timestamp information from the log, and store it in the object's
+        iteration_timestamps/direction_timestamps attribute.
         """
         if self.stim_type == 'DriftingGratingCircle':
             frame_directions = []
@@ -229,9 +229,8 @@ class DisplayLogAnalyzer(object):
 
     def save_to_recording(self, recording_full_path=None):
         """
-        Searches for the corresponding .hdf recording file and saves the stimulus log and the extracted variables to it.
+        Search for the corresponding .hdf recording file and save the stimulus log and the extracted variables to it.
         Intended to be run after using stim_block_extractor().
-        :return:
         """
         from visexpa.engine.datahandlers.hdf5io import Hdf5io
         if recording_full_path is None:  # Tries to find corresponding recording based on timestamp in filename.
@@ -305,6 +304,54 @@ class DisplayLogAnalyzer(object):
 
             else:
                 print("Saving this stimulus type is not implemented yet.")
+
+    def save_to_json(self):
+        """
+        Save stimulus parameters to .json file in the original log's folder.
+        Intended to be run after using stim_block_extractor().
+        """
+        outfile_name = str(self.log_path)[:-3] + 'json'
+        with open(outfile_name, 'w') as outfile:
+            if self.stim_type == 'KSstimAllDir':
+                try:
+                    data = {}
+                    data["directon_timestamps"] = self.direction_timestamps
+                    data["stim_parameters"] = {}
+                    data["stim_parameters"]["iteration"] = self.iteration
+                    data["stim_parameters"]["directions"] = self.direction
+                    data["stim_parameters"]["stim_type"] = self.stim_type
+                    data["stim_parameters"]["num_frame_tot"] = self.num_frame_tot
+
+                    print('Saving')
+                    #  save direction_timestamps
+                    json.dump(data, outfile, sort_keys=True, indent=4)
+
+                except IOError:
+                    print('Saving was unsuccessful.')
+
+            elif self.stim_type == 'CombinedStimuli':
+                self.stimuli_sequence = self.log_dict['stimulation']['stimuli_sequence']
+                is_UniformContrast = True
+                for name in self.stimuli_sequence:
+                    if 'UniformContrast' not in name:
+                        is_UniformContrast = False
+                if is_UniformContrast:
+                    try:
+                        data = {}
+                        data["iteration_timestamps"] = self.iteration_timestamps
+                        data["stim_parameters"] = {}
+                        data["stim_parameters"]["iteration"] = self.iteration
+                        data["stim_parameters"]["stim_type"] = self.stim_type
+                        data["stim_parameters"]["num_frame_tot"] = self.num_frame_tot
+                        print('Saving')
+                        json.dump(data, outfile, sort_keys=True, indent=4)
+
+                    except IOError:
+                        print('Saving was unsuccessful.')
+
+            else:
+                print("Saving this stimulus type is not implemented yet.")
+
 
     def analyze_photodiode_onsets_sequential(self, stim_dict, pd_thr=-0.5):
         """
