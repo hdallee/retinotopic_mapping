@@ -149,26 +149,19 @@ class DisplayLogAnalyzer(object):
         iteration_timestamps/direction_timestamps attribute.
         """
         if self.stim_type == 'DriftingGratingCircle':
-            frame_directions = []
-            for i in self.log_dict['presentation']['displayed_frames']:
-                frame_directions.append(i[4])
-
+            self.direction = [str(dir) for dir in self.log_dict['stimulation']['dire_list']]
             self.direction_timestamps = {}
-            for direction in self.log_dict['stimulation']['dire_list']:
+            for direction in self.direction:
                 self.direction_timestamps[direction] = []
-
-            num_of_cut_frames = 0
-            for i in range(self.iteration):
-                last_frame_of_iteration, direction_frame_ind_dict \
-                    = extract_dir_order_of_iteration(frame_directions, self.log_dict['stimulation']['dire_list'])
-                frame_directions = frame_directions[last_frame_of_iteration:]
-
-                for direction in self.log_dict['stimulation']['dire_list']:
-                    self.direction_timestamps[direction].append((
-                        self.log_dict['presentation']['frame_ts_start'][direction_frame_ind_dict[direction][0] + num_of_cut_frames],
-                        self.log_dict['presentation']['frame_ts_end'][direction_frame_ind_dict[direction][1] + num_of_cut_frames]))
-
-                num_of_cut_frames += last_frame_of_iteration
+            for i in range(len(self.log_dict['presentation']['displayed_frames'])):
+                if self.log_dict['presentation']['displayed_frames'][i][0] > \
+                        self.log_dict['presentation']['displayed_frames'][i - 1][0]:
+                    iteration_first_index = i
+                elif self.log_dict['presentation']['displayed_frames'][i][0] < \
+                        self.log_dict['presentation']['displayed_frames'][i - 1][0]:
+                    self.direction_timestamps[str(self.log_dict['presentation']['displayed_frames'][i - 1][4])].append(
+                        (self.log_dict['presentation']['frame_ts_start'][iteration_first_index],
+                         self.log_dict['presentation']['frame_ts_end'][i - 1]))
 
         elif self.stim_type == 'KSstim':
             self.direction = self.log_dict['stimulation']['direction']
@@ -247,7 +240,7 @@ class DisplayLogAnalyzer(object):
 
         with Hdf5io(filename=str(recording_full_path), filelocking=False) as recording:
             print(recording.h5f)
-            if self.stim_type == 'KSstimAllDir':
+            if self.stim_type == 'KSstimAllDir' or self.stim_type == 'DriftingGratingCircle':
                 try:
                     print('Saving')
                     #  save direction_timestamps
@@ -261,11 +254,6 @@ class DisplayLogAnalyzer(object):
                     recording.save(['direction_timestamps', 'stim_parameters'])
                 except IOError:
                     print('Saving was unsuccessful.')
-
-                print(recording.findvar('B2U', path='/direction_timestamps'))
-                print(recording.findvar('directions', path='/stim_parameters'))
-                print(recording.findvar('stim_type', path='/stim_parameters'))
-                print(recording.findvar('timestamps'))
 
             elif self.stim_type == 'KSstim':
                 try:
