@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import numpy as np
 import json
+import pickle
 import retinotopic_mapping.tools.FileTools as ft
 import retinotopic_mapping.tools.GenericTools as gt
 from retinotopic_mapping.tools.IO.LogFileExtractorTools import extract_dir_order_of_iteration
@@ -292,6 +293,10 @@ class DisplayLogAnalyzer(object):
 
             else:
                 print("Saving this stimulus type is not implemented yet.")
+
+            # Dump whole stimulation log to hdf5 file in pickled format
+            recording.stim_log = pickle.dumps(self.log_dict)
+            recording.save(['stim_log'])
 
     def save_to_json(self):
         """
