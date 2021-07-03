@@ -146,13 +146,20 @@ class DisplayLogAnalyzer(object):
 
     def stim_block_extractor(self):
         """
-        Extract stimulus timestamp information from the log, and store it in the object's
-        iteration_timestamps/direction_timestamps attribute.
+        Extract stimulus index and timestamp information from the log, and store it in the object's
+        iteration_indices/direction_indices and iteration_timestamps/direction_timestamps attribute.
+
+        Returns
+        -------
+        None
+
         """
         if self.stim_type == 'DriftingGratingCircle':
             self.direction = [str(dir) for dir in self.log_dict['stimulation']['dire_list']]
+            self.direction_indices = {}
             self.direction_timestamps = {}
             for direction in self.direction:
+                self.direction_indices[direction] = []
                 self.direction_timestamps[direction] = []
             for i in range(len(self.log_dict['presentation']['displayed_frames'])):
                 if self.log_dict['presentation']['displayed_frames'][i][0] > \
@@ -163,12 +170,13 @@ class DisplayLogAnalyzer(object):
                     self.direction_timestamps[str(self.log_dict['presentation']['displayed_frames'][i - 1][4])].append(
                         (self.log_dict['presentation']['frame_ts_start'][iteration_first_index],
                          self.log_dict['presentation']['frame_ts_end'][i - 1]))
+                    self.direction_indices[str(self.log_dict['presentation']['displayed_frames'][i - 1][4])].append(
+                        (iteration_first_index, i-1))
 
         elif self.stim_type == 'KSstim':
             self.direction = self.log_dict['stimulation']['direction']
+            self.iteration_indices = []
             self.iteration_timestamps = []
-            # iteration_first_index = -1
-            # iteration_last_index = -1
             for i in range(len(self.log_dict['presentation']['displayed_frames'])):
                 if self.log_dict['presentation']['displayed_frames'][i][0] > \
                         self.log_dict['presentation']['displayed_frames'][i - 1][0]:
@@ -176,15 +184,19 @@ class DisplayLogAnalyzer(object):
                 elif self.log_dict['presentation']['displayed_frames'][i][0] < \
                         self.log_dict['presentation']['displayed_frames'][i - 1][0]:
                     iteration_last_index = i-1
-                    self.iteration_timestamps.append((self.log_dict['presentation']['frame_ts_start'][iteration_first_index], self.log_dict['presentation']['frame_ts_start'][iteration_last_index]))
+                    self.iteration_timestamps.append((self.log_dict['presentation']['frame_ts_start'][iteration_first_index],
+                                                      self.log_dict['presentation']['frame_ts_start'][iteration_last_index]))
+                    self.iteration_indices.append((iteration_first_index, iteration_last_index))
 
             if not len(self.iteration_timestamps) == self.iteration:
                 ValueError("Couldn't extract timestamps of all iterations.")
 
         elif self.stim_type == 'KSstimAllDir':
             self.direction = self.log_dict['stimulation']['direction']
+            self.direction_indices = {}
             self.direction_timestamps = {}
             for direction in self.direction:
+                self.direction_indices[direction] = []
                 self.direction_timestamps[direction] = []
             for i in range(len(self.log_dict['presentation']['displayed_frames'])):
                 if self.log_dict['presentation']['displayed_frames'][i][0] > \
@@ -195,6 +207,8 @@ class DisplayLogAnalyzer(object):
                     self.direction_timestamps[self.log_dict['presentation']['displayed_frames'][i-1][4]].append(
                         (self.log_dict['presentation']['frame_ts_start'][iteration_first_index],
                          self.log_dict['presentation']['frame_ts_end'][i-1]))
+                    self.direction_indices[self.log_dict['presentation']['displayed_frames'][i - 1][4]].append(
+                        (iteration_first_index, i - 1))
 
         elif self.stim_type == 'CombinedStimuli':
             self.stimuli_sequence = self.log_dict['stimulation']['stimuli_sequence']
@@ -203,6 +217,7 @@ class DisplayLogAnalyzer(object):
                 if 'UniformContrast' not in name:
                     is_UniformContrast = False
             if is_UniformContrast:
+                self.iteration_indices = []
                 self.iteration_timestamps = []
                 block_started = False
                 for i in range(len(self.log_dict['presentation']['displayed_frames'])):
@@ -214,9 +229,9 @@ class DisplayLogAnalyzer(object):
                           self.log_dict['presentation']['displayed_frames'][i - 1][1]) or \
                             (block_started and i == len(self.log_dict['presentation']['displayed_frames'])-1):
                         iteration_last_index = i - 1
-                        self.iteration_timestamps.append((self.log_dict['presentation']['frame_ts_start']
-                                                          [iteration_first_index], self.log_dict['presentation']
-                                                          ['frame_ts_start'][iteration_last_index]))
+                        self.iteration_timestamps.append((self.log_dict['presentation']['frame_ts_start'][iteration_first_index],
+                                                          self.log_dict['presentation']['frame_ts_start'][iteration_last_index]))
+                        self.iteration_indices.append((iteration_first_index, iteration_last_index))
                         block_started = False  # we found the end of the stim block
             else:
                 print('Combined stimuli that are not Uniform Contrast are not implemented yet.')
@@ -301,13 +316,22 @@ class DisplayLogAnalyzer(object):
     def save_to_json(self):
         """
         Save stimulus parameters to .json file in the original log's folder.
+
+        Notes
+        -----
         Intended to be run after using stim_block_extractor().
+
+        Returns
+        -------
+        None
+
         """
         outfile_name = str(self.log_path)[:-3] + 'json'
         with open(outfile_name, 'w') as outfile:
-            if self.stim_type == 'KSstimAllDir':
+            if self.stim_type == 'KSstimAllDir' or self.stim_type == 'DriftingGratingCircle':
                 try:
                     data = {}
+                    data["direction_indices"] = self.direction_indices
                     data["directon_timestamps"] = self.direction_timestamps
                     data["stim_parameters"] = {}
                     data["stim_parameters"]["iteration"] = self.iteration
@@ -331,6 +355,7 @@ class DisplayLogAnalyzer(object):
                 if is_UniformContrast:
                     try:
                         data = {}
+                        data["iteration_indices"] = self.iteration_indices
                         data["iteration_timestamps"] = self.iteration_timestamps
                         data["stim_parameters"] = {}
                         data["stim_parameters"]["iteration"] = self.iteration
