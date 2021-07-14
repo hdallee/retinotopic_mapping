@@ -248,7 +248,7 @@ class DisplayLogAnalyzer(object):
             log_ts_str = str(self.log_path.stem)[6:12]
             found_file_counter = 0
             for filename in os.listdir(self.recording_path):
-                if filename[-4:] == 'hdf5' and abs(ft.time_diff_in_seconds(log_ts_str, filename[9:15])) < 20:
+                if filename[-4:] == 'hdf5' and abs(ft.time_diff_in_seconds(log_ts_str, filename[9:15])) < 30:
                     recording_full_path = self.recording_path / filename
                     found_file_counter += 1
             if found_file_counter != 1:
