@@ -210,6 +210,25 @@ class DisplayLogAnalyzer(object):
                     self.direction_indices[self.log_dict['presentation']['displayed_frames'][i - 1][4]].append(
                         (iteration_first_index, i - 1))
 
+        elif self.stim_type == 'FlashingCircle':
+            self.iteration_indices = []
+            self.iteration_timestamps = []
+            block_started = False
+            for i in range(len(self.log_dict['presentation']['displayed_frames'])):
+                if self.log_dict['presentation']['displayed_frames'][i][1] > \
+                        self.log_dict['presentation']['displayed_frames'][i - 1][1]:
+                    iteration_first_index = i
+                    block_started = True
+                elif (block_started and self.log_dict['presentation']['displayed_frames'][i][1] <
+                      self.log_dict['presentation']['displayed_frames'][i - 1][1]) or \
+                        (block_started and i == len(self.log_dict['presentation']['displayed_frames']) - 1):
+                    iteration_last_index = i - 1
+                    self.iteration_timestamps.append(
+                        (self.log_dict['presentation']['frame_ts_start'][iteration_first_index],
+                         self.log_dict['presentation']['frame_ts_start'][iteration_last_index]))
+                    self.iteration_indices.append((iteration_first_index, iteration_last_index))
+                    block_started = False  # we found the end of the stim block
+
         elif self.stim_type == 'CombinedStimuli':
             self.stimuli_sequence = self.log_dict['stimulation']['stimuli_sequence']
             is_UniformContrast = True
@@ -278,6 +297,20 @@ class DisplayLogAnalyzer(object):
                     recording.stim_parameters = {}
                     recording.stim_parameters['iteration'] = self.iteration
                     recording.stim_parameters['directions'] = self.direction
+                    recording.stim_parameters['stim_type'] = self.stim_type
+                    recording.stim_parameters['num_frame_tot'] = self.num_frame_tot
+
+                    recording.save(['iteration_timestamps', 'stim_parameters'])
+
+                except IOError:
+                    print('Saving was unsuccessful.')
+
+            elif self.stim_type == 'FlashingCircle':
+                try:
+                    print('Saving')
+                    recording.iteration_timestamps = self.iteration_timestamps
+                    recording.stim_parameters = {}
+                    recording.stim_parameters['iteration'] = self.iteration
                     recording.stim_parameters['stim_type'] = self.stim_type
                     recording.stim_parameters['num_frame_tot'] = self.num_frame_tot
 
