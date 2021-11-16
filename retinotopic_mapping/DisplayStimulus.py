@@ -189,7 +189,6 @@ class DisplaySequence(object):
                  sync_pulse_NI_dev='Dev1',
                  sync_pulse_NI_port=1,
                  sync_pulse_NI_line=1,
-                 is_camera=False,
                  display_screen=0,
                  initial_background_color=0.,
                  color_weights=(1., 1., 1.)):
