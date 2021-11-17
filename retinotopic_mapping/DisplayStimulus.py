@@ -213,7 +213,6 @@ class DisplaySequence(object):
         self.sync_pulse_NI_dev = sync_pulse_NI_dev
         self.sync_pulse_NI_port = sync_pulse_NI_port
         self.sync_pulse_NI_line = sync_pulse_NI_line
-        self.is_camera = is_camera
         self.display_screen = display_screen
 
         if len(color_weights) != 3:
