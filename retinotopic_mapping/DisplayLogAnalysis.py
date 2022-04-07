@@ -255,7 +255,7 @@ class DisplayLogAnalyzer(object):
             else:
                 print('Combined stimuli that are not Uniform Contrast are not implemented yet.')
 
-    def save_to_recording(self, recording_full_path=None):
+    def save_to_recording(self, recording_full_path=None, script_source=None):
         """
         Search for the corresponding .hdf recording file and save the stimulus log and the extracted variables to it.
         Intended to be run after using stim_block_extractor().
@@ -345,6 +345,11 @@ class DisplayLogAnalyzer(object):
             # Dump whole stimulation log to hdf5 file in pickled format
             recording.stim_log = pickle.dumps(self.log_dict)
             recording.save(['stim_log'])
+
+            # Save experiment script source if it was provided
+            if script_source is not None:
+                recording.script_source = script_source
+                recording.save(f'script_source')
 
     def save_to_json(self):
         """

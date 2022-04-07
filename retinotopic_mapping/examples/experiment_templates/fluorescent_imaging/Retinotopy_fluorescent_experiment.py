@@ -53,4 +53,6 @@ if __name__ == '__main__':
     latest_file = max(list_of_files, key=os.path.getctime)
     print(latest_file)
 
-    save_log_to_recording(latest_file)
+    with open(__file__) as source:
+        own_source = source.read()
+    save_log_to_recording(latest_file, script_source=own_source)

@@ -2,7 +2,7 @@ import retinotopic_mapping.DisplayLogAnalysis as dla
 from pathlib import Path
 import os
 
-def save_log_to_recording(filepath: str):
+def save_log_to_recording(filepath: str, script_source: str):
     """
     Extract the stimulus parameters needed for analysis from a single .pkl log file, and save them
     to the corresponding .hdf5 recording file.
@@ -18,7 +18,7 @@ def save_log_to_recording(filepath: str):
     """
     analyser = dla.DisplayLogAnalyzer(Path(filepath))
     analyser.stim_block_extractor()
-    analyser.save_to_recording()
+    analyser.save_to_recording(recording_full_path=None, script_source=script_source)
 
 
 def save_logs_in_folder_to_recording(folder_path: Path):
