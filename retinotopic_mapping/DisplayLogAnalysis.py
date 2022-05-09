@@ -21,15 +21,16 @@ class DisplayLogAnalyzer(object):
     information into nwb files.
     """
 
-    def __init__(self, log_path):
+    def __init__(self, log_path, skip_integrity_check=False):
 
         self.log_path = log_path
         self.log_dict = ft.loadFile(log_path)
 
-        if not self.log_dict['presentation']['is_by_index']:
-            warnings.warn('The visual stimuli display should be indexed.')
-        else:
-            self.check_integrity()
+        if not skip_integrity_check:
+            if not self.log_dict['presentation']['is_by_index']:
+                warnings.warn('The visual stimuli display should be indexed.')
+            else:
+                self.check_integrity()
 
         self.stim_type = self.log_dict['stimulation']['stim_name']
         if not self.stim_type == 'CombinedStimuli':
@@ -161,7 +162,9 @@ class DisplayLogAnalyzer(object):
             for direction in self.direction:
                 self.direction_indices[direction] = []
                 self.direction_timestamps[direction] = []
-            for i in range(len(self.log_dict['presentation']['displayed_frames'])):
+
+            if self.log_dict['presentation']['displayed_frames'][0][0] == 1: iteration_first_index=0
+            for i in range(1, len(self.log_dict['presentation']['displayed_frames'])):
                 if self.log_dict['presentation']['displayed_frames'][i][0] > \
                         self.log_dict['presentation']['displayed_frames'][i - 1][0]:
                     iteration_first_index = i
@@ -177,7 +180,9 @@ class DisplayLogAnalyzer(object):
             self.direction = self.log_dict['stimulation']['direction']
             self.iteration_indices = []
             self.iteration_timestamps = []
-            for i in range(len(self.log_dict['presentation']['displayed_frames'])):
+
+            if self.log_dict['presentation']['displayed_frames'][0][0] == 1: iteration_first_index = 0
+            for i in range(1, len(self.log_dict['presentation']['displayed_frames'])):
                 if self.log_dict['presentation']['displayed_frames'][i][0] > \
                         self.log_dict['presentation']['displayed_frames'][i - 1][0]:
                     iteration_first_index = i
@@ -198,7 +203,9 @@ class DisplayLogAnalyzer(object):
             for direction in self.direction:
                 self.direction_indices[direction] = []
                 self.direction_timestamps[direction] = []
-            for i in range(len(self.log_dict['presentation']['displayed_frames'])):
+
+            if self.log_dict['presentation']['displayed_frames'][0][0] == 1: iteration_first_index = 0
+            for i in range(1, len(self.log_dict['presentation']['displayed_frames'])):
                 if self.log_dict['presentation']['displayed_frames'][i][0] > \
                         self.log_dict['presentation']['displayed_frames'][i - 1][0]:
                     iteration_first_index = i

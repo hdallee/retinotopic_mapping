@@ -1,4 +1,4 @@
-name: stimulus_gen_3_7
+name: functional_imaging
 channels:
   - defaults
 dependencies:
