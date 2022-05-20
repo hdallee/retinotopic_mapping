@@ -15,8 +15,8 @@ temporal_frequency = 1.5  # in cycles/second
 
 recording_length = 30  # in sec
 
-target_LED_power = 10
-LED_config = cfg = {'wait_pre_s': 0, 'pulse_width_s': 0.2, 'pulse_period_s': 1.0}
+target_LED_power = 90
+LED_config = cfg = {'wait_pre_s': 0, 'pulse_width_s': 0.4, 'pulse_period_s': 1.0}
 
 folder = time.strftime('%Y.\\%m.%d.\\data')
 LED_log_filename = time.strftime('%Y%m%d-%H%M%S-' + comment + '-led_log.pkl')
