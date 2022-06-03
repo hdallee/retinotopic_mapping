@@ -1,6 +1,7 @@
 import retinotopic_mapping.DisplayLogAnalysis as dla
 from pathlib import Path
 import os
+import pickle as pkl
 
 def save_log_to_recording(filepath: str, script_source: str):
     """
@@ -19,6 +20,28 @@ def save_log_to_recording(filepath: str, script_source: str):
     analyser = dla.DisplayLogAnalyzer(Path(filepath))
     analyser.stim_block_extractor()
     analyser.save_to_recording(recording_full_path=None, script_source=script_source)
+
+
+def save_extrenal_stim_timestamps_to_recording(recording, timestamp_filepath: str, script_source: str=None):
+    timestamp_file = open(timestamp_filepath, 'rb')
+    timestamp_list = pkl.load(timestamp_file)
+    zeros = []
+    for i in range(len(timestamp_list)):
+        zeros.append(0)
+
+    timestamp_pairs = list(zip(timestamp_list, zeros))
+
+    recording.stim_parameters = {}
+    recording.stim_parameters['iteration'] = len(timestamp_list)
+    recording.stim_parameters['stim_type'] = 'ExternalStim'
+
+    recording.iteration_timestamps = timestamp_pairs
+    recording.save(['iteration_timestamps', 'stim_parameters'])
+
+    # Save experiment script source if it was provided
+    if script_source is not None:
+        recording.script_source = script_source
+        recording.save(['script_source'])
 
 
 def save_logs_in_folder_to_recording(folder_path: Path, filter=None):

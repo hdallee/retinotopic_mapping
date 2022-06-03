@@ -4,10 +4,14 @@ from visexpa.engine.datahandlers.teledyne_camera import record
 import retinotopic_mapping.StimulusRoutines as stim
 from retinotopic_mapping import LaserStim
 from visexpa.engine.datahandlers.labjack import LED_stimulation
-from retinotopic_mapping.tools.IO.log_file_extraction import save_log_to_recording
+from retinotopic_mapping.tools.IO.log_file_extraction import save_extrenal_stim_timestamps_to_recording
+from hdf5io.hdf5io import Hdf5io
+import glob
+import os
+from pathlib import Path
 
-animal_id = 'Rat_no58'
-comment = 'laser_power_50'  # Eg: laser_power_50 or not_dark_adapted etc.
+animal_id = 'Rat_57'
+comment = 'led_power_100'  # Eg: laser_power_50 or not_dark_adapted etc.
 stimulator_device = 'Prizmatix' # NP if Neurophotometrics laser is used, Prizmatix if Prizmatix LED is used
 
 grating_width = 0.1  # in cycles/visual degree
@@ -15,8 +19,8 @@ temporal_frequency = 1.5  # in cycles/second
 
 recording_length = 30  # in sec
 
-target_LED_power = 90
-LED_config = cfg = {'wait_pre_s': 0, 'pulse_width_s': 0.4, 'pulse_period_s': 1.0}
+target_LED_power = 100
+LED_config = cfg = {'wait_pre_s': 0, 'pulse_width_s': 0.1, 'pulse_period_s': 5.0}
 
 folder = time.strftime('%Y.\\%m.%d.\\data')
 LED_log_filename = time.strftime('%Y%m%d-%H%M%S-' + comment + '-led_log.pkl')
@@ -27,8 +31,6 @@ if __name__ == '__main__':
                                                       'comment': animal_id + '_' + comment})
 
     # Set up stimulation
-
-
     stimulator_process = Process(target=LED_stimulation, kwargs={'TTL_config': LED_config,
                                                                  'target_LED_current': target_LED_power,
                                                                  'len': recording_length,
@@ -47,4 +49,17 @@ if __name__ == '__main__':
     recorder_process.join()
     stimulator_process.join()
 
+    # Saving stimulation log to recording file
+    print("Saving log to recording")
+    current_path = os.getcwd()
+    current_path = Path(current_path)
+    log_path = current_path / "data"
+    list_of_files = glob.glob(os.path.normpath(log_path) + "\\*.hdf5")
+    latest_file = max(list_of_files, key=os.path.getctime)
+    print(latest_file)
 
+    with open(__file__) as source:
+        own_source = source.read()
+    recording = Hdf5io(latest_file)
+    save_extrenal_stim_timestamps_to_recording(recording, timestamp_filepath=log_path / LED_log_filename, script_source=own_source)
+    recording.close()
