@@ -1,1 +1,1 @@
-{"config": "fluorescent", "exp_time": 30, "framerate": 30, "binning": [2, 2]}
+{"config": "fluorescent", "exp_time": 30, "framerate": 30, "binning": [2, 2], "temporal_averaging": 1}
