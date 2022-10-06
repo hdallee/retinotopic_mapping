@@ -260,7 +260,26 @@ class DisplayLogAnalyzer(object):
                         self.iteration_indices.append((iteration_first_index, iteration_last_index))
                         block_started = False  # we found the end of the stim block
             else:
-                print('Combined stimuli that are not Uniform Contrast are not implemented yet.')
+                print('Extracting limits of combined stimuli blocks.')
+                self.iteration_indices = []
+                self.iteration_timestamps = []
+                block_started = False
+
+                current_stim_block = None
+                for i in range(len(self.log_dict['presentation']['displayed_frames'])):
+                    if self.log_dict['presentation']['displayed_frames'][i][1] > \
+                            self.log_dict['presentation']['displayed_frames'][i - 1][1]\
+                            and self.log_dict['presentation']['displayed_frames'][i][0] != current_stim_block:
+                        iteration_first_index = i
+                        block_started = True
+                        current_stim_block = self.log_dict['presentation']['displayed_frames'][i][0]
+                    elif (block_started and self.log_dict['presentation']['displayed_frames'][i][0] != current_stim_block) or \
+                            (block_started and i == len(self.log_dict['presentation']['displayed_frames'])-1):
+                        iteration_last_index = i - 1
+                        self.iteration_timestamps.append((self.log_dict['presentation']['frame_ts_start'][iteration_first_index],
+                                                          self.log_dict['presentation']['frame_ts_start'][iteration_last_index]))
+                        self.iteration_indices.append((iteration_first_index, iteration_last_index))
+                        block_started = False  # we found the end of the stim block
 
     def save_to_recording(self, recording_full_path=None, script_source=None):
         """
@@ -328,11 +347,11 @@ class DisplayLogAnalyzer(object):
 
             elif self.stim_type == 'CombinedStimuli':
                 self.stimuli_sequence = self.log_dict['stimulation']['stimuli_sequence']
-                is_UniformContrast = True
+                is_UniformContrast_or_FlashingCircle = True
                 for name in self.stimuli_sequence:
-                    if 'UniformContrast' not in name:
-                        is_UniformContrast = False
-                if is_UniformContrast:
+                    if 'UniformContrast' not in name and 'FlashingCircle' not in name:
+                        is_UniformContrast_or_FlashingCircle = False
+                if is_UniformContrast_or_FlashingCircle:
                     try:
                         print('Saving')
                         recording.iteration_timestamps = self.iteration_timestamps
