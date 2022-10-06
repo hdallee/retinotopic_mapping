@@ -1,7 +1,7 @@
 import os
 import glob
 from pathlib import Path
-from multiprocessing import Process
+from multiprocessing import Process, Event
 from visexpa.engine.datahandlers.teledyne_camera import record
 import retinotopic_mapping.StimulusRoutines as stim
 from retinotopic_mapping.MonitorSetup import Monitor, Indicator
@@ -14,11 +14,11 @@ comment = ''  # Eg: laser_power_50 or not_dark_adapted etc.
 grating_width = 0.1  # in cycles/visual degree
 temporal_frequency = 1.5  # in cycles/second
 
-recording_length = 300  # in sec
-
 if __name__ == '__main__':
     # Set up recording
-    recorder_process = Process(target=record, kwargs={'config': 'from_file', 'length': recording_length, 'TTL': False, 'comment': animal_id + '_' + comment})
+    stim_finished_flag = Event()
+    recorder_process = Process(target=record, kwargs={'config': 'from_file', 'length': None,
+                                                      'end_flag':stim_finished_flag, 'TTL': False, 'comment': animal_id + '_' + comment})
     
     # Set up stimulation
     # Using Fujitsu DY22T-7
@@ -44,8 +44,9 @@ if __name__ == '__main__':
     stimulator_process.start()
 
     # Ending processes
-    recorder_process.join()
     stimulator_process.join()
+    stim_finished_flag.set()
+    recorder_process.join()
 
     # Saving stimulation log to recording file
     print("Saving log to recording")
