@@ -1,9 +1,9 @@
 import time
-from multiprocessing import Process
+from multiprocessing import Process, Event
 from visexpa.engine.datahandlers.teledyne_camera import record
 import retinotopic_mapping.StimulusRoutines as stim
 from retinotopic_mapping import LaserStim
-from visexpa.engine.datahandlers.labjack import LED_stimulation
+from visexpa.engine.datahandlers.labjack import interleaved_external_stimulation
 from retinotopic_mapping.tools.IO.log_file_extraction import save_extrenal_stim_timestamps_to_recording
 from hdf5io.hdf5io import Hdf5io
 import glob
@@ -23,14 +23,18 @@ LED_config = cfg = {'wait_pre_s': 3, 'pulse_width_s': 0.1, 'pulse_period_s': 5.0
 folder = time.strftime('%Y.\\%m.%d.\\data')
 LED_log_filename = time.strftime('%Y%m%d-%H%M%S-' + comment + '-led_log.pkl')
 
+not_save_frames = Event()
+
 if __name__ == '__main__':
     # Set up recording
     recorder_process = Process(target=record, kwargs={'config': 'from_file', 'length': recording_length, 'TTL': False,
-                                                      'comment': animal_id + '_' + comment})
+                                                      'comment': animal_id + '_' + comment,
+                                                      'not_save_frames_event': not_save_frames})
 
     # Set up stimulation
-    stimulator_process = Process(target=LED_stimulation, kwargs={'TTL_config': LED_config,
+    stimulator_process = Process(target=interleaved_external_stimulation, kwargs={'TTL_config': LED_config,
                                                                  'target_LED_current': target_LED_power,
+                                                                 'not_save_frames_event': not_save_frames,
                                                                  'len': recording_length,
                                                                  'outfile_path': 'D:\\Data\\Experiment\\' + folder +
                                                                                  '\\' + LED_log_filename})
