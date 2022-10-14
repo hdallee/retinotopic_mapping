@@ -18,6 +18,7 @@ recording_length = 30  # in sec
 
 target_LED_power = 100
 # 'wait_pre_s' has to be at least 3 seconds! Otherwise you might lose a part of the first stimulation.
+# 'pulse_width_s' has to be the same length as the stimulation set in Bonsai for the Neurophotometrics laser.
 LED_config = cfg = {'wait_pre_s': 3, 'pulse_width_s': 0.1, 'pulse_period_s': 5.0}
 
 folder = time.strftime('%Y.\\%m.%d.\\data')
