@@ -21,7 +21,8 @@ temporal_frequency = 2  # in Hz
 wait_before = 10  # in sec, record before stimulation starts
 stop_before = 10  # in sec, stop stimulation before recording
 
-stim_num = temporal_frequency * recording_length - (temporal_frequency * stop_before * 2)
+stim_num = 25 # number of all flashes
+flashes_per_block = 5 # number of flashes per block
 
 blocks = True
 
@@ -50,11 +51,11 @@ if __name__ == '__main__':
     #                                 con_list=[1.], iteration=10, is_blank_block=False, sqr=True)
 
     uc = stim.UniformContrast(mon, ind, duration=stim_period, color=1)
-    fc = stim.FlashingCircle(mon, ind, center=(0., 60.), radius=50., color=1, midgap_dur=stim_period, iteration=5,
+    fc = stim.FlashingCircle(mon, ind, center=(0., 60.), radius=50., color=1, midgap_dur=stim_period, iteration=flashes_per_block,
                              flash_frame_num=flash_frame_number)
     if blocks:
         repeated_stim = stim.CombinedStimuli(mon, ind, background=-1, pregap_dur=3, postgap_dur=0)
-        repeated_stim.set_stimuli([fc] * int(stim_num/5)) # set the number of iterations here
+        repeated_stim.set_stimuli([fc] * int(stim_num/flashes_per_block))
     else:
         repeated_stim = stim.CombinedStimuli(mon, ind, background=-1, pregap_dur=stim_period, postgap_dur=0)
         repeated_stim.set_stimuli([uc]*stim_num)  # set the number of iterations here

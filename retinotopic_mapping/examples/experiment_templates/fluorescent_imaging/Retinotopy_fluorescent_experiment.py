@@ -32,7 +32,7 @@ if __name__ == '__main__':
     dummy = Monitor(resolution=(0,0), dis=1, mon_width_cm=1, mon_height_cm=1)
     ind = Indicator(dummy)
 
-    ks = stim.KSstimAllDir(mon, ind, square_size=15, flicker_frame=10, sweep_width=12, step_width=0.20, sweep_frame=1, pregap_dur=2, postgap_dur=1, iteration=10)
+    ks = stim.KSstimAllDir(mon, ind, square_size=4, flicker_frame=12, sweep_width=8, step_width=0.05, sweep_frame=1, pregap_dur=2, postgap_dur=1, iteration=10)
     ds = DisplaySequence(log_dir="stimulus", is_by_index=False, display_screen=1, is_sync_pulse_LJ=False)
     
     ds.set_stim(ks)
