@@ -38,8 +38,8 @@ if __name__ == '__main__':
     recorder_process = Process(target=record, kwargs={'config': 'from_file', 'length': None, 'end_flag':stim_finished_flag, 'TTL': False, 'comment': animal_id + '_' + comment})
     
     # Set up stimulation
-    mon = Monitor(resolution=monitors[monitor]['resolution'], dis=monitor_distance, mon_width_cm=monitors[monitor]['width'],
-                  mon_height_cm=monitors[monitor]['height'], downsample_rate=4, refresh_rate=60.0)
+    mon = Monitor(resolution=monitors[monitor]['resolution'], dis=70, mon_width_cm=monitors[monitor]['width'],
+                  mon_height_cm=monitors[monitor]['height'], downsample_rate=4, refresh_rate=60.0)  # monitor distance given above not used to make sure that the stimulus fills the screen
 
     # The next 2 lines are a workaround for hiding the indicator.
     dummy = Monitor(resolution=(0,0), dis=1, mon_width_cm=1, mon_height_cm=1)
