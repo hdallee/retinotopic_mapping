@@ -60,7 +60,8 @@ if __name__ == '__main__':
         repeated_stim = stim.CombinedStimuli(mon, ind, background=-1, pregap_dur=stim_period, postgap_dur=0)
         repeated_stim.set_stimuli([uc]*stim_num)  # set the number of iterations here
 
-    ds = DisplaySequence(log_dir="stimulus", is_by_index=True, display_screen=1, is_sync_pulse_LJ=False)
+    ds = DisplaySequence(log_dir="stimulus", is_by_index=True, display_screen=1, is_sync_pulse_LJ=False,
+                         initial_background_color=-1)
     ds.set_stim(repeated_stim)
 
     stimulator_process = Process(target=ds.trigger_display, kwargs={'fullscr': True})
