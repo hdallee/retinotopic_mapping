@@ -32,7 +32,7 @@ if __name__ == '__main__':
     dummy = Monitor(resolution=(0,0), dis=1, mon_width_cm=1, mon_height_cm=1)
     ind = Indicator(dummy)
 
-    dg = stim.DriftingGratingCircle(mon, ind, radius_list=[50], dire_list=[0, 90, 180, 270],
+    dg = stim.DriftingGratingCircle(mon, ind, radius_list=[60], dire_list=[0, 90, 180, 270],
                                     pregap_dur=3, postgap_dur=3, is_smooth_edge=False, block_dur=4, midgap_dur=3,
                                     center=(0., 60.), sf_list=[grating_width], tf_list=[temporal_frequency],
                                     con_list=[1.], iteration=10, is_blank_block=False, sqr=True)
