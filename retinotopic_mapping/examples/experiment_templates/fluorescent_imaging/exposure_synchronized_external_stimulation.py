@@ -24,8 +24,8 @@ recording_length = 30  # in sec
 
 target_LED_power = 100
 # 'wait_pre_s' has to be at least 3 seconds! Otherwise you might lose a part of the first stimulation.
-# 'pulse_width_s' has to be the same length as the stimulation set in Bonsai for the Neurophotometrics laser.
-LED_config = {'wait_pre_s': 3, 'pulse_width_s': 0.2, 'pulse_count': 10, 'pulse_period_s': 5.0}
+# 'pulse_width_s' is the time period in which the LabJack sends out a TTL spike for every camera frame exposure start
+LED_config = {'wait_pre_s': 3, 'pulse_width_s': 0.2, 'pulse_count': 5, 'pulse_period_s': 5.0}
 
 folder = time.strftime('%Y.\\%m.%d.\\data')
 LED_log_filename = time.strftime('%Y%m%d-%H%M%S-' + comment + '-led_log.pkl')
